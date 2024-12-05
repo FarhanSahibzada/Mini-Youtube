@@ -45,29 +45,29 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 
-userSchema.pre("save" , async function (next) {
-    if(!this.isModified("password")) return
+userSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) return
 
-   this.password = bcrypt.hash(this.password , 10)
+    this.password = await bcrypt.hash(this.password, 10)
     next()
 })
 
 // my own method to check passowrd 
-userSchema.methods.isPasswordCorrected = async function (password){
-   return await  bcrypt.compare(password , this.password)
+userSchema.methods.isPasswordCorrected = async function (password) {
+    return await bcrypt.compare(password, this.password)
 }
 
 userSchema.methods.generatedAccessToken = function () {
     return jwt.sign(
         {
-            id : this._id,
-            email : this.email ,
-            username : this.username ,
-            fullName : this.fullName
-        } ,
+            id: this._id,
+            email: this.email,
+            username: this.username,
+            fullName: this.fullName
+        },
         process.env.ACCESS_TOKEN_SCRECT,
         {
-            expiresIn : process.env.ACCESS_TOKEN_EXPERIY
+            expiresIn: process.env.ACCESS_TOKEN_EXPERIY
         }
     )
 }
@@ -75,11 +75,11 @@ userSchema.methods.generatedAccessToken = function () {
 userSchema.methods.generatedRefreshToken = function () {
     return jwt.sign(
         {
-            id : this._id
-        } ,
+            id: this._id
+        },
         process.env.REFRESH_TOKEN_SECRET,
         {
-            expiresIn : process.env.REFRESH_TOKEN_EXPERIY
+            expiresIn: process.env.REFRESH_TOKEN_EXPERIY
         }
     )
 }
