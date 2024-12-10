@@ -3,7 +3,7 @@ import { ApiError } from '../utils/APIerror.js';
 import { User } from '../modal/User.modal.js'
 import { UploadOnCloudinary } from '../Service/Cloudinary.js';
 import { ApiResponse } from '../utils/ApiResponse.js'
-
+import jwt from "jsonwebtoken"
 
 const generateAccessTokenAndResfreshToken = async (userId) => {
     try {
@@ -96,16 +96,16 @@ const registerUser = Asynchandler(async (req, res) => {
 
 })
 
-const loginUser = Asynchandler(async (req,res) => {
+const loginUser = Asynchandler(async (req, res) => {
     // check if the user details  is register or not 
     // find the user 
     // password check 
     // acess and refresh token
     // send cookie
 
-   
-   
-    const {email, username, password} = req.body
+
+
+    const { email, username, password } = req.body
 
 
     if (!username && !email) {
@@ -113,7 +113,7 @@ const loginUser = Asynchandler(async (req,res) => {
     }
 
     const user = await User.findOne({
-        $or: [{username}, {email}]
+        $or: [{ username }, { email }]
     })
 
     if (!user) {
@@ -142,7 +142,7 @@ const loginUser = Asynchandler(async (req,res) => {
         ))
 })
 
-const logoutUser = Asynchandler(async (req,res) => {
+const logoutUser = Asynchandler(async (req, res) => {
     User.findByIdAndUpdate(req.user._id,
         {
             $set: {
@@ -155,20 +155,62 @@ const logoutUser = Asynchandler(async (req,res) => {
     )
 
     const options = {
-        httpOnly : true ,
-        secure : true 
+        httpOnly: true,
+        secure: true
     }
 
-   return res
-    .status(200)
-    .clearCookie("accessToken" , options)
-    .clearCookie("refreshToken" , options)
-    .json( new ApiResponse (200  , {} , "User Logout Successfully "))
+    return res
+        .status(200)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json(new ApiResponse(200, {}, "User Logout Successfully "))
 })
 
+const refreshAccessToken = Asynchandler(async (req, res) => {
+    const Token = req.cookie?.refeshToken || req.body.refeshToken
+    if (!Token) {
+        throw new ApiError(401, "unAuthorized Token");
+    }
+
+    try {
+        const verifyToken = jwt.verify(Token, process.env.REFRESH_TOKEN_SECRET)
+        const user = await User.findOne(verifyToken?._id)
+        if (!user) {
+            throw new ApiError("401", "Invalid Refresh token");
+        }
+    
+        if (Token != user.refreshToken) {
+            throw new ApiError(401, "Refresh token is experied or used");
+        }
+    
+        const { AccessToken, RefrehToken } = await generateAccessTokenAndResfreshToken(user._id)
+    
+        const options = {
+            httpOnly: true,
+            secure: true
+        }
+    
+        return res
+        .status(200)
+        .cookie("accessToken", AccessToken, options)
+        .cookie("refreshToken", RefrehToken, options)
+        .json(
+            new ApiResponse(
+                200, 
+                {AccessToken, RefrehToken},
+                "Access token refreshed"
+            )
+        )
+    
+    } catch (error) {
+        throw new ApiError(401 , error?.message || "invalid refresh token");        
+    }
+
+})
 
 export {
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser ,
+    refreshAccessToken
 }
