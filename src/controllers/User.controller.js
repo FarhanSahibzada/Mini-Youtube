@@ -96,27 +96,28 @@ const registerUser = Asynchandler(async (req, res) => {
 
 })
 
-const loginUser = Asynchandler(async (res, req) => {
+const loginUser = Asynchandler(async (req,res) => {
     // check if the user details  is register or not 
     // find the user 
     // password check 
     // acess and refresh token
     // send cookie
 
-    const { email, username, password } = req.body;
-    if (!username || !email) {
-        throw new ApiError(400, "username or email is required ");
+   
+   
+    const {email, username, password} = req.body
+
+
+    if (!username && !email) {
+        throw new ApiError(400, "username or email is required")
     }
 
     const user = await User.findOne({
-        $or: [{
-            username
-        }, { email }
-        ]
+        $or: [{username}, {email}]
     })
 
     if (!user) {
-        throw new ApiError(400, "User is not Exist")
+        throw new ApiError(400, "User docs not Exist")
     }
 
     const ispasswordValid = await user.isPasswordCorrected(password)
@@ -125,7 +126,7 @@ const loginUser = Asynchandler(async (res, req) => {
     }
 
     const { AccessToken, RefrehToken } = await generateAccessTokenAndResfreshToken(user._id)
-    const loggedInUser = User.findOne(user._id).select("-password  -refreshToken")
+    const loggedInUser = await User.findOne(user._id).select("-password  -refreshToken")
     const options = {
         httpOnly: true,
         secure: true
@@ -141,7 +142,7 @@ const loginUser = Asynchandler(async (res, req) => {
         ))
 })
 
-const logoutUser = Asynchandler(async (res, req) => {
+const logoutUser = Asynchandler(async (req,res) => {
     User.findByIdAndUpdate(req.user._id,
         {
             $set: {
