@@ -4,6 +4,25 @@ import { User } from '../modal/User.modal.js'
 import { UploadOnCloudinary } from '../Service/Cloudinary.js';
 import { ApiResponse } from '../utils/ApiResponse.js'
 
+
+const generateAccessTokenAndResfreshToken = async (userId) => {
+    try {
+        const user = await User.findById(userId)
+        const AccessToken = user.generatedAccessToken()
+        const RefrehToken = user.generatedRefreshToken()
+        user.refeshToken = RefrehToken;
+        await user.save({ validateBeforeSave: false })
+
+        return {
+            AccessToken,
+            RefrehToken
+        }
+    } catch (error) {
+        throw new ApiError(500, "Something Went Wrong while Generating Access and Refreh token");
+
+    }
+}
+
 const registerUser = Asynchandler(async (req, res) => {
     // steps 
     // get the  user data from front-end   
@@ -38,14 +57,14 @@ const registerUser = Asynchandler(async (req, res) => {
     const avatarfilepath = req.files?.avatar[0]?.path;
 
     let Coverimagepath;
-    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0){
-        Coverimagepath = req.files.coverImage[0].path ;
+    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+        Coverimagepath = req.files.coverImage[0].path;
     }
 
 
-        if (!avatarfilepath) {
-            throw new ApiError(400, "Avatar file is required ")
-        }
+    if (!avatarfilepath) {
+        throw new ApiError(400, "Avatar file is required ")
+    }
 
     const avatar = await UploadOnCloudinary(avatarfilepath)
     const coverimage = await UploadOnCloudinary(Coverimagepath)
@@ -77,8 +96,78 @@ const registerUser = Asynchandler(async (req, res) => {
 
 })
 
+const loginUser = Asynchandler(async (res, req) => {
+    // check if the user details  is register or not 
+    // find the user 
+    // password check 
+    // acess and refresh token
+    // send cookie
+
+    const { email, username, password } = req.body;
+    if (!username || !email) {
+        throw new ApiError(400, "username or email is required ");
+    }
+
+    const user = await User.findOne({
+        $or: [{
+            username
+        }, { email }
+        ]
+    })
+
+    if (!user) {
+        throw new ApiError(400, "User is not Exist")
+    }
+
+    const ispasswordValid = await user.isPasswordCorrected(password)
+    if (!ispasswordValid) {
+        throw new ApiError(401, "Invalid user Credientials")
+    }
+
+    const { AccessToken, RefrehToken } = await generateAccessTokenAndResfreshToken(user._id)
+    const loggedInUser = User.findOne(user._id).select("-password  -refreshToken")
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+    return res
+        .status(200)
+        .cookie("accessToken", AccessToken, options)
+        .cookie("refreshToken", RefrehToken, options)
+        .json(new ApiResponse(
+            200,
+            { user: loggedInUser, AccessToken, RefrehToken },
+            "User Logged In Successfully"
+        ))
+})
+
+const logoutUser = Asynchandler(async (res, req) => {
+    User.findByIdAndUpdate(req.user._id,
+        {
+            $set: {
+                refreshToken: undefined
+            }
+        },
+        {
+            new: true
+        }
+    )
+
+    const options = {
+        httpOnly : true ,
+        secure : true 
+    }
+
+   return res
+    .status(200)
+    .clearCookie("accessToken" , options)
+    .clearCookie("refreshToken" , options)
+    .json( new ApiResponse (200  , {} , "User Logout Successfully "))
+})
 
 
 export {
-    registerUser
+    registerUser,
+    loginUser,
+    logoutUser
 }
