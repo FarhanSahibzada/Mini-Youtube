@@ -1,7 +1,7 @@
 import { Asynchandler } from '../utils/Asynchandler.js'
 import { ApiError } from '../utils/APIerror.js';
 import { User } from '../modal/User.modal.js'
-import { UploadOnCloudinary } from '../Service/Cloudinary.js';
+import { UploadOnCloudinary, UploadOnCloudinary } from '../Service/Cloudinary.js';
 import { ApiResponse } from '../utils/ApiResponse.js'
 import jwt from "jsonwebtoken"
 
@@ -178,39 +178,145 @@ const refreshAccessToken = Asynchandler(async (req, res) => {
         if (!user) {
             throw new ApiError("401", "Invalid Refresh token");
         }
-    
+
         if (Token != user.refreshToken) {
             throw new ApiError(401, "Refresh token is experied or used");
         }
-    
+
         const { AccessToken, RefrehToken } = await generateAccessTokenAndResfreshToken(user._id)
-    
+
         const options = {
             httpOnly: true,
             secure: true
         }
-    
-        return res
-        .status(200)
-        .cookie("accessToken", AccessToken, options)
-        .cookie("refreshToken", RefrehToken, options)
-        .json(
-            new ApiResponse(
-                200, 
-                {AccessToken, RefrehToken},
-                "Access token refreshed"
-            )
-        )
-    
-    } catch (error) {
-        throw new ApiError(401 , error?.message || "invalid refresh token");        
-    }
 
+        return res
+            .status(200)
+            .cookie("accessToken", AccessToken, options)
+            .cookie("refreshToken", RefrehToken, options)
+            .json(
+                new ApiResponse(
+                    200,
+                    { AccessToken, RefrehToken },
+                    "Access token refreshed"
+                )
+            )
+
+    } catch (error) {
+        throw new ApiError(401, error?.message || "invalid refresh token");
+    }
 })
 
+const changeCurrentPassword = Asynchandler(async (req, res) => {
+    // steps
+    // get old and new passowrd from rewq.body
+    // then get user id from middleware 
+    // use bycript ispasswordcorrect method to oldpassowrd and this who saved in database
+
+    const { oldPassword, newPassword } = req.body;
+    const user = await User.findOne(req.user?._id)
+    const isPasswordCorrect = await user.isPasswordCorrected(oldPassword)
+    if (!isPasswordCorrect) {
+        throw new ApiError(401, "old password is not corrected ");
+    }
+    user.password = newPassword;
+    await user.save({ validateBeforeSave: false })
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200, {}, "passowrd changed successfully"))
+})
+
+const getCurrentUser = Asynchandler(async (req, res) => {
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            req.user,
+            "currentUser was found "
+        ))
+})
+
+const updateDetails = Asynchandler(async () => {
+    const { fullName, email } = req.body;
+    if (!fullName || !email) {
+        throw new ApiError(401, "Something was wrong");
+    }
+    const userUpdate = User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: {
+                fullName,
+                email: email
+            }
+        }, {
+        new: true
+    }
+    ).select("-passowrd")
+    return res
+        .status(200)
+        .json(new ApiResponse(200, userUpdate, "account details updated"))
+})
+
+const updateAvatar = Asynchandler(async (req, res) => {
+    const avatarLocalPath = req.file?.path;
+    if (!avatarLocalPath) {
+        throw new ApiError(401, "Avatar file is missing");
+    }
+    const avatarlink = await UploadOnCloudinary(avatarLocalPath)
+    if (!avatarlink) {
+        throw new ApiError(401, "Error while Uploadicng avatr");
+    }
+    const user = User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: {
+              avatar :  avatarlink.url
+            } 
+        },
+        {
+            new : true
+        }
+    ).select("-password")
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200 , user  , "Avatar Successfully Updated"))
+})
+
+const updateCoverIImage = Asynchandler(async (req, res) => {
+    const coverLocalPath = req.file?.path;
+    if (!coverLocalPath) {
+        throw new ApiError(401, "Covermage  is missing");
+    }
+    const CoverImagelink = await UploadOnCloudinary(coverLocalPath)
+    if (!CoverImagelink) {
+        throw new ApiError(401, "Error while Uploadicng CoverImage");
+    }
+    const user = User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: {
+                coverImage : CoverImagelink.url
+            }
+        },
+        {
+            new : true
+        }
+    ).select("-password")
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200 , user  , "Coverimage Successfully Updated"))
+})
 export {
     registerUser,
     loginUser,
-    logoutUser ,
-    refreshAccessToken
+    logoutUser,
+    refreshAccessToken,
+    changeCurrentPassword,
+    getCurrentUser,
+    updateDetails,
+    updateAvatar,
+    updateCoverIImage
 }
