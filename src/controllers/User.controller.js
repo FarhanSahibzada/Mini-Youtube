@@ -1,7 +1,7 @@
 import { Asynchandler } from '../utils/Asynchandler.js'
 import { ApiError } from '../utils/APIerror.js';
 import { User } from '../modal/User.modal.js'
-import { UploadOnCloudinary, UploadOnCloudinary } from '../Service/Cloudinary.js';
+import { UploadOnCloudinary, RemoveOldImageFromCloudinary } from '../Service/Cloudinary.js';
 import { ApiResponse } from '../utils/ApiResponse.js'
 import jwt from "jsonwebtoken"
 
@@ -242,7 +242,7 @@ const updateDetails = Asynchandler(async () => {
     if (!fullName || !email) {
         throw new ApiError(401, "Something was wrong");
     }
-    const userUpdate = User.findByIdAndUpdate(
+    const userUpdate = await User.findByIdAndUpdate(
         req.user._id,
         {
             $set: {
@@ -267,21 +267,24 @@ const updateAvatar = Asynchandler(async (req, res) => {
     if (!avatarlink) {
         throw new ApiError(401, "Error while Uploadicng avatr");
     }
-    const user = User.findByIdAndUpdate(
-        req.user._id,
-        {
-            $set: {
-              avatar :  avatarlink.url
-            } 
-        },
-        {
-            new : true
-        }
-    ).select("-password")
+
+    const user = await User.findById(req.user._id)
+    if (!user) {
+        throw new ApiError(200, "to change avatar please log in again");
+    }
+    const oldAvatar = user.avatar;
+    user.avatar = avatarlink.url;
+    await user.save()
+
+    if (oldAvatar) {
+        const oldpublic_id = await RemoveOldImageFromCloudinary(oldAvatar)
+    } else {
+        throw new ApiError(500, "old avatar link is not found try again");
+    }
 
     return res
-    .status(200)
-    .json(new ApiResponse(200 , user  , "Avatar Successfully Updated"))
+        .status(200)
+        .json(new ApiResponse(200, user, "Avatar Successfully Updated"))
 })
 
 const updateCoverIImage = Asynchandler(async (req, res) => {
@@ -293,22 +296,89 @@ const updateCoverIImage = Asynchandler(async (req, res) => {
     if (!CoverImagelink) {
         throw new ApiError(401, "Error while Uploadicng CoverImage");
     }
-    const user = User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user._id,
         {
             $set: {
-                coverImage : CoverImagelink.url
+                coverImage: CoverImagelink.url
             }
         },
         {
-            new : true
+            new: true
         }
     ).select("-password")
 
     return res
+        .status(200)
+        .json(new ApiResponse(200, user, "Coverimage Successfully Updated"))
+});
+
+const getChannel = Asynchandler(async (req, res) => {
+    const { username } = req.parmas;
+    if (!username) {
+        throw new ApiError(401, "User is not found ");
+    }
+    const channel = await User.aggregate([
+        {
+            $match: {
+                username: username?.toLowerCase()
+            }
+        },
+        {
+            $lookup: {
+                from: "subcriptions",
+                localField: "_id",
+                foreignField: "channel",
+                as: "Subcribers"
+            }
+        },
+        {
+            $lookup: {
+                from: 'subcriptions',
+                localField: "_id",
+                foreignField: "subcriber",
+                as: 'subcribeTo'
+            }
+        },
+        {
+            $addFields : {
+                subcriberCount : {
+                    $size : "$Subcribers"
+                },
+                channelSubcriberToCount : {
+                    $size : "$subcribeTo"
+                },
+                isSubcribed  :{
+                    $count : {
+                        if : {$in : [req.user?._id , "$Subcribers.subcriber"]},
+                        then : true ,
+                        else : false 
+                    }
+                }
+            }
+        },
+        {
+            $project : {
+                username  : 1 ,
+                fullName : 1 ,
+                subcriberCount  : 1 ,
+                channelSubcriberToCount : 1 ,
+                avatar : 1 ,
+                coverImage : 1 ,
+                email : 1  ,
+            }
+        }
+    ])
+
+    if(channel?.length){ 
+        throw new ApiError(401 , "channel docs not exist");
+    }
+
+    return res
     .status(200)
-    .json(new ApiResponse(200 , user  , "Coverimage Successfully Updated"))
+    .json(new ApiResponse(200 , channel[0] , "User channel is fetched successfully "))
 })
+
 export {
     registerUser,
     loginUser,
@@ -318,5 +388,6 @@ export {
     getCurrentUser,
     updateDetails,
     updateAvatar,
-    updateCoverIImage
+    updateCoverIImage,
+    getChannel
 }

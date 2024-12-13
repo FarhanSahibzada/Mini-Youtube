@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
+import { log } from "console";
 import fs from 'fs'
 
 
@@ -14,13 +15,12 @@ const UploadOnCloudinary = async (localfilepath) => {
         if (!localfilepath) return
 
         //upload the file on cloudinary 
-
         const response = await cloudinary.uploader.upload(localfilepath, {
             resource_type: 'auto'
         })
 
         // file has been uploaded 
-       fs.unlinkSync(localfilepath)
+        fs.unlinkSync(localfilepath)
         return response
     } catch (error) {
         fs.unlinkSync(localfilepath) // remove localfile saved file if the upload operation failed 
@@ -28,4 +28,18 @@ const UploadOnCloudinary = async (localfilepath) => {
     }
 }
 
-export { UploadOnCloudinary }
+const RemoveOldImageFromCloudinary = async (oldAvatarUrl) => {
+    const matches = url.match(/\/v\d+\/(.+)\.\w+$/);
+    const public_id = matches[1]
+    if (matches) {
+        try {
+            await cloudinary.uploader.destroy(public_id)
+        } catch (error) {
+            console.log("failed to delet old avatar  ", error);
+        }
+    }
+}
+
+
+
+export { UploadOnCloudinary, RemoveOldImageFromCloudinary }
