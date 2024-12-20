@@ -2,7 +2,7 @@ import { Asynchandler } from '../utils/Asynchandler.js'
 import { ApiError } from '../utils/APIerror.js';
 import { User } from '../modal/User.modal.js'
 import { UploadOnCloudinary, RemoveOldImageFromCloudinary } from '../Service/Cloudinary.js';
-import { ApiResponse } from '../utils/ApiResponse.js'
+import { ApiResponse } from '../utils/APIResponse.js'
 import jwt from "jsonwebtoken"
 import mongoose from 'mongoose';
 
@@ -229,13 +229,14 @@ const changeCurrentPassword = Asynchandler(async (req, res) => {
 })
 
 const getCurrentUser = Asynchandler(async (req, res) => {
-    return res
-        .status(200)
-        .json(new ApiResponse(
-            200,
-            req.user,
-            "currentUser was found "
-        ))
+   //return  console.log(req.user)
+     return res
+         .status(200)
+         .json(new ApiResponse(
+             200,
+             req?.user,
+             "currentUser was found "
+         ))
 })
 
 const updateDetails = Asynchandler(async () => {
@@ -278,7 +279,7 @@ const updateAvatar = Asynchandler(async (req, res) => {
     await user.save()
 
     if (oldAvatar) {
-        const oldpublic_id = await RemoveOldImageFromCloudinary(oldAvatar)
+        return await RemoveOldImageFromCloudinary(oldAvatar)
     } else {
         throw new ApiError(500, "old avatar link is not found try again");
     }
