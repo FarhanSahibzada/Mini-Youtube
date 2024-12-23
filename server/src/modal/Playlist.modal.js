@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
 
-const playlistSchema =  mongoose.Schema({
-    name : {
-        type : string ,
-        required : true ,
+const playlistSchema = new mongoose.Schema({
+    name: {
+        type: string,
+        required: true,
     },
     description: {
         type: String,
@@ -20,4 +20,7 @@ const playlistSchema =  mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: "User"
     },
-})
+}, { timestamps: true })
+
+
+const Playlist = mongoose.model("Playlist", playlistSchema)

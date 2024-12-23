@@ -8,6 +8,15 @@ import { Asynchandler } from "../utils/Asynchandler.js";
 
 
 const getAllVideos = Asynchandler(async (req, res) => {
-    const { page = 1, limit = 10, query, sortType, userId } = req.query ;
+    const { page = 1, limit = 10,  userId } = req.query;
+    if (!userId) {
+        throw new ApiError(409, "userId is not found");
+    }
+
+    const videoAggergation = Video.aggregate([
+        {
+            $match : new mongoose.Types.ObjectId(userId)
+        }
+    ])
 
 })
