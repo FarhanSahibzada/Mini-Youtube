@@ -3,7 +3,7 @@ import { Dropdown } from './Dropdown';
 
 export default function Navbar() {
   return (
-    <nav className="bg-white z-50 ">
+    <nav className="bg-white z-50  relative">
       <div className="flex items-center justify-between w-[100%] h-14 px-4">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">

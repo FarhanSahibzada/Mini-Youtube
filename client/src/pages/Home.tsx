@@ -1,16 +1,18 @@
-import Navbar from "@/components/Navber";
-import Sidebar from "@/components/Sidebar";
+
+import libaray from '@/assest/Videofile.json'
+import Card from "@/components/Card";
 
 
 export default function Home() {
+  const data = libaray;
+
   return (
-    <div className='flex gap-1 flex-col-reverse sm:flex-row bg-base-200  overflow-hidden'>
-       <div>
-         <Sidebar />
-       </div>
-       <div className='w-full'>
-         <Navbar />
-       </div>
-     </div>
+    <div className="py-4 px-4 w-full my-2 ">
+      <div className="flex flex-wrap gap-6 justify-center">
+        {data.map((dataa)=>(
+          <Card items={dataa}/>
+        ))}
+      </div>
+    </div>
   )
 }
