@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 export default function Profile() {
     const [currentTab, setCurrentTab] = useState('Home');
-    const tabs = ['Home', 'Videos', 'Playlist', 'About'];
+    const tabs = ['Home', 'Videos', 'Playlist'];
 
     const RenderTab = () => {
         switch (currentTab) {

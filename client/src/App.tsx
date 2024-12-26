@@ -1,27 +1,27 @@
 import { useState } from "react"
-// import Navbar from "./components/Navber"
-// import Sidebar from "./components/Sidebar"
 // import { Outlet } from "react-router-dom"
 //import SignUpForm from "./pages/SignUpForm"
 //import SignInForm from "./pages/SigninForm"
-import Home from "./pages/Home"
+//import Home from "./pages/Home"
 import Navbar from "./components/Navber"
-import Sidebar from "./components/Sidebar"
-import Profile from "./pages/Profile"
+import YouTubeWatchPage from "./pages/YoutubeWatchPage"
+//import Sidebar from "./components/Sidebar"
+//import Profile from "./pages/Profile"
 
 function App() {
   const [loading, setLoading] = useState(false)
 
   return !loading ? (
-    <div className='flex gap-1 flex-col-reverse sm:flex-row bg-base-200  overflow-hidden bg-white'>
-      <div>
+    <div className='flex gap-1 flex-col-reverse sm:flex-row  overflow-hidden bg-white'>
+      {/* <div>
         <Sidebar />
-      </div>
+      </div> */}
       <div className='w-full'>
         <Navbar />
-        <Profile/>
+        {/* <Profile/> */}
         {/* <Home /> */}
         {/* <Outlet /> */}
+        <YouTubeWatchPage/>
       </div>
     </div>
     //  <SignUpForm/>

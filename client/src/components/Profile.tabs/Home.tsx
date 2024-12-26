@@ -9,7 +9,14 @@ function Home() {
     <div className='w-full px-4 '>
       <div className='h-120 w-full bg-blue mt-3 flex md:flex-row flex-col  gap-10 items-start'>
         <div className='rounded-xl bg-red-400 overflow-hidden ' style={{width : '420px' , height :'210px'}}>
-      <ReactPlayer url={"https://www.youtube.com/watch?v=whfPBZmNtd4"} light={true} width={"420px"} height={'210px'} controls={true}  />
+      <ReactPlayer
+       url={"https://www.youtube.com/watch?v=whfPBZmNtd4"}
+         light={true}
+          width={"420px"} 
+          height={'210px'} 
+          controls={true} 
+          playing={true}
+          />
         </div> 
         <div>
           <h1 className='font-bold text-gray-500  text-xl md:text-2xl  '>{latestvideo.title}</h1>

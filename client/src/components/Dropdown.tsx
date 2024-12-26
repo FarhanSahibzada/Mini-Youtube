@@ -1,4 +1,3 @@
-import dpImage from '@/assest/dp.png'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -14,8 +13,9 @@ export function Dropdown() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <div className="w-12 h-12 rounded-full  ring-2 ring-red-500">
-                    <img src={dpImage} alt=""  className='w-full h-full object-cover'/>
+                <div className="w-12 h-12 rounded-full  ">
+                    <img src='https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop'
+                      alt=""  className='w-full h-full object-cover rounded-full'/>
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">

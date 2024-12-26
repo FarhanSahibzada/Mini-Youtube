@@ -1,8 +1,12 @@
+import Cardstackk from "../Cardstack"
 
 function Playlist() {
   return (
-    <div>Playlist</div>
+    <div className="w-full overflow-hidden">
+        <Cardstackk/>
+    </div>    
   )
 }
 
 export default Playlist
+
