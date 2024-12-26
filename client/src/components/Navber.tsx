@@ -28,7 +28,7 @@ export default function Navbar() {
           <button className="p-2 hover:bg-gray-100 rounded-full">
             <Video size={24} />
           </button>
-          <button className="p-2 hover:bg-gray-100 rounded-full">
+          <button className="p-2 hover:bg-gray-100 rounded-full ">
             <Dropdown/>
           </button>
         </div>

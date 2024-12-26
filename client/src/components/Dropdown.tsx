@@ -14,7 +14,7 @@ export function Dropdown() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <div className="w-12 h-12 rounded-full bg-blue-500">
+                <div className="w-12 h-12 rounded-full  ring-2 ring-red-500">
                     <img src={dpImage} alt=""  className='w-full h-full object-cover'/>
                 </div>
             </DropdownMenuTrigger>
