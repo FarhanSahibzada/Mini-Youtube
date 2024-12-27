@@ -1,5 +1,9 @@
 import Input from '@/components/Input';
+import { userLogin } from '@/store/Userslice';
+import axios from 'axios';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 // import { Link } from 'react-router-dom';
 
 interface SignInFormData {
@@ -10,9 +14,24 @@ interface SignInFormData {
 
 export default function SignInForm() {
     const { register, handleSubmit, formState: { errors } } = useForm<SignInFormData>();
-
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
     const onSubmit = async (data: SignInFormData) => {
-        console.log(data);
+        try {
+       
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/users/login`, data , {withCredentials : true});
+            if (response && response.data) {
+                const res = response.data.data.user
+                console.log(response.data.data.user);
+                dispatch(userLogin(res));
+                navigate('/my-profile');
+            } else {
+                console.log("Can't get any data");
+            }
+        } catch (error) {
+            console.error("Login failed", error);
+            alert('Login failed. Please check your credentials and try again.');
+        }
     };
 
     return (

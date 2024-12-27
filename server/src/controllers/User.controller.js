@@ -36,10 +36,10 @@ const registerUser = Asynchandler(async (req, res) => {
     // check for user response
     //return  response
 
-    const { fullName, username, email, password } = req.body;
+    const { username, email, password } = req.body;
 
     if (
-        [fullName, username, email, password].some((field) => field?.trim() == "")
+        [username, email, password].some((field) => field?.trim() == "")
     ) {
         throw new ApiError(409, 'All fields are required ');
     }
@@ -75,7 +75,6 @@ const registerUser = Asynchandler(async (req, res) => {
     }
 
     const user = await User.create({
-        fullName,
         avatar: avatar.url,
         coverImage: coverimage?.url || "",
         email,
@@ -130,8 +129,9 @@ const loginUser = Asynchandler(async (req, res) => {
     const loggedInUser = await User.findOne(user._id).select("-password  -refreshToken")
     const options = {
         httpOnly: true,
-        secure: true
+        secure: process.env.NODE_ENV === 'production' 
     }
+
     return res
         .status(200)
         .cookie("accessToken", AccessToken, options)
@@ -229,14 +229,14 @@ const changeCurrentPassword = Asynchandler(async (req, res) => {
 })
 
 const getCurrentUser = Asynchandler(async (req, res) => {
-   //return  console.log(req.user)
-     return res
-         .status(200)
-         .json(new ApiResponse(
-             200,
-             req?.user,
-             "currentUser was found "
-         ))
+    //return  console.log(req.user)
+    return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            req?.user,
+            "currentUser was found "
+        ))
 })
 
 const updateDetails = Asynchandler(async () => {
@@ -429,8 +429,8 @@ const getWatchHistory = Asynchandler(async (req, res) => {
     ])
 
     return res
-    .status(200)
-    .json(new ApiResponse(200 , user[0].watchHistory , "watchHistory and owner fetch"))
+        .status(200)
+        .json(new ApiResponse(200, user[0].watchHistory, "watchHistory and owner fetch"))
 
 })
 

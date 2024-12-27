@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type UserInfo = {
   id: string;
-  watchHistory: Array<object>; 
+  watchHistory: Array<object>;
   username: string;
   email: string;
   fullname?: string;
@@ -12,13 +12,13 @@ type UserInfo = {
 
 type InitialState = {
   userLogin: UserInfo | null;
-  logout: boolean;
+  authStatus: boolean;
   searchTerm?: string;
 };
 
 const initialState: InitialState = {
-  userLogin: null, 
-  logout: false,
+  userLogin: null,
+  authStatus: false,
 };
 
 const userSlice = createSlice({
@@ -27,14 +27,14 @@ const userSlice = createSlice({
   reducers: {
     userLogin: (state, action: PayloadAction<UserInfo>) => {
       state.userLogin = action.payload;
-      state.logout = false; 
+      state.authStatus = true;
     },
     logout: (state) => {
-      state.userLogin = null; 
-      state.logout = true; 
+      state.userLogin = null;
+      state.authStatus = false;
     },
     setSearchTerm: (state, action: PayloadAction<string>) => {
-      state.searchTerm = action.payload; 
+      state.searchTerm = action.payload;
     },
   },
 });
