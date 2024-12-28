@@ -1,12 +1,14 @@
 import { Search, Video, } from 'lucide-react';
 import { Dropdown } from './Dropdown';
+import { useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
+  const navigate = useNavigate()
   return (
     <nav className="bg-white z-50  relative">
       <div className="flex items-center justify-between w-[100%] h-14 px-4">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 hover:bg-base-200 px-4 py-2 rounded-xl " onClick={()=> navigate('/Home')}>
             <Video className="text-red-600" size={20} />
             <span className="text-base sm:text-xl font-semibold">YouTube</span>
           </div>

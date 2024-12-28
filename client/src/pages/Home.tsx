@@ -6,8 +6,8 @@ export default function Home() {
   const data = libaray;
 
   return (
-    <div className="py-4 px-4 w-full my-2 ">
-      <div className="flex flex-wrap gap-6 justify-start">
+    <div className="px-4 py-4 w-full  mt-14 sm:mt-0 ">
+      <div className="grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-2">
         {data.map((dataa , index)=>(
           <Card key={index} items={dataa} />
         ))}

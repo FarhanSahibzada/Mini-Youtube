@@ -26,7 +26,7 @@ function Home() {
       </div>
       <div className='w-full  my-6 '>
         <h1 className='my-6  font-bold text-xl md:text-2xl '>For You</h1>
-        <div className='flex flex-wrap gap-4 justify-start  w-full'>
+        <div className="grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-2">
           {data.map((item: videoProps, index) => (
             <Card key={index} items={item} profileshow={false} />
           ))}

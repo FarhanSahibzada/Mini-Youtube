@@ -1,8 +1,10 @@
 import Home from '@/components/Profile.tabs/Home';
 import Playlist from '@/components/Profile.tabs/Playlist';
 import Videos from '@/components/Profile.tabs/Videos';
+import { RootState } from '@/store/Store';
 import { Bell, UserCheck2 } from 'lucide-react';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function Profile() {
     const [currentTab, setCurrentTab] = useState('Home');
@@ -20,6 +22,7 @@ export default function Profile() {
                 return <div>No content available</div>;
         }
     };
+    const userData = useSelector((state : RootState) => state.auth.userLogin)
 
     return (
         <div className="w-full">
@@ -32,7 +35,7 @@ export default function Profile() {
                     {/* Avatar */}
                     <div className="w-24 h-24 rounded-full overflow-hidden -mt-8 ring-8 ring-white">
                         <img
-                            src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop"
+                            src= {userData?.avatar ||"https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop"}
                             alt="Channel Avatar"
                             className="w-full h-full object-cover"
                         />
@@ -40,9 +43,9 @@ export default function Profile() {
 
                     {/* Channel Info */}
                     <div className="flex-1">
-                        <h1 className="text-2xl font-bold">Tech Channel</h1>
+                        <h1 className="text-2xl font-bold">{userData?.username}</h1>
                         <div className="flex items-center gap-2 text-gray-600 mt-1">
-                            <span className="font-medium">@techchannel</span>
+                            <span className="font-medium">{userData?.email}</span>
                             <span>•</span>
                             <span>1.2M subscribers</span>
                             <span>•</span>

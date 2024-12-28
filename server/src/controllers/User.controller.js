@@ -90,7 +90,7 @@ const registerUser = Asynchandler(async (req, res) => {
         throw new ApiError(500, "something went while registering the user");
     }
 
-    return res.status(201).json(
+    return res.status(200).json(
         new ApiResponse(200, createdbyuser, "user registered successfully")
     )
 
@@ -157,7 +157,7 @@ const logoutUser = Asynchandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true
+        secure: process.env.NODE_ENV === 'production' 
     }
 
     return res

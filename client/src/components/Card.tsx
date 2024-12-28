@@ -13,7 +13,7 @@ interface CardProps {
 
 function Card({ items, profileshow = true }: CardProps) {
     return (
-        <div className="card card-compact  bg-base-100 w-80 h-80 shadow-xl  overflow-hidden">
+        <div className="card card-compact  bg-base-100  min-h-60   overflow-hidden">
             <figure>
                 <img
                     src={items.thumbnail}

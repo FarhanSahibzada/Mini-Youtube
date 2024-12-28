@@ -7,7 +7,7 @@ export default function Home() {
 
   return (
     <div className="py-4 pe-2 w-full my-2 ">
-      <div className="flex flex-wrap gap-6 justify-start">
+      <div className="grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-2">
         {data.map((dataa , index)=>(
           <Card key={index} items={dataa} profileshow={false} />
         ))}

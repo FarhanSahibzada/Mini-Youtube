@@ -15,7 +15,8 @@ function App() {
     const getuser = async () => {
       setLoading(true)
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/users/current-user`, { withCredentials: true })
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/users/current-user`,
+           { withCredentials: true })
         if (response && response.data) {
 
           const user = response.data.data;

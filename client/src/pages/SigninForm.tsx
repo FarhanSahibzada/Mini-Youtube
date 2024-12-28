@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-// import { Link } from 'react-router-dom';
+ import { Link } from 'react-router-dom';
 
 interface SignInFormData {
     username: string;
@@ -18,11 +18,10 @@ export default function SignInForm() {
     const navigate = useNavigate()
     const onSubmit = async (data: SignInFormData) => {
         try {
-       
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/users/login`, data , {withCredentials : true});
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/users/login`, data , 
+                {withCredentials : true});
             if (response && response.data) {
                 const res = response.data.data.user
-                console.log(response.data.data.user);
                 dispatch(userLogin(res));
                 navigate('/my-profile');
             } else {
@@ -105,9 +104,9 @@ export default function SignInForm() {
                 <div className="mt-1 text-center">
                     <div className="text-gray-600">
                         Dont't have any {' '}
-                        {/* <Link to="/signup">
+                         <Link to="/sign-up">
                             <span className="text-red-500 cursor-pointer">account? </span>
-                        </Link> */}
+                        </Link> 
                     </div>
                 </div>
 
