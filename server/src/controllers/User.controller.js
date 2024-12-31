@@ -75,8 +75,14 @@ const registerUser = Asynchandler(async (req, res) => {
     }
 
     const user = await User.create({
-        avatar: avatar.url,
-        coverImage: coverimage?.url || "",
+        avatar:{
+          url : avatar.url,
+           public_Id : avatar.public_id 
+        } ,
+        coverImage: {
+            url : coverimage.url ,
+            public_Id : coverimage.public_id 
+        },
         email,
         password,
         username: username.toLowerCase()
@@ -129,7 +135,7 @@ const loginUser = Asynchandler(async (req, res) => {
     const loggedInUser = await User.findOne(user._id).select("-password  -refreshToken")
     const options = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production' 
+        secure: process.env.NODE_ENV === 'production'
     }
 
     return res
@@ -157,7 +163,7 @@ const logoutUser = Asynchandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production' 
+        secure: process.env.NODE_ENV === 'production'
     }
 
     return res
@@ -275,11 +281,14 @@ const updateAvatar = Asynchandler(async (req, res) => {
         throw new ApiError(200, "to change avatar please log in again");
     }
     const oldAvatar = user.avatar;
-    user.avatar = avatarlink.url;
+    user.avatar = {
+        url : avatarlink.url ,
+        public_Id : avatarlink.public_id
+    };
     await user.save()
 
     if (oldAvatar) {
-        return await RemoveOldImageFromCloudinary(oldAvatar)
+         await RemoveOldImageFromCloudinary(oldAvatar)
     } else {
         throw new ApiError(500, "old avatar link is not found try again");
     }
@@ -302,7 +311,10 @@ const updateCoverIImage = Asynchandler(async (req, res) => {
         req.user._id,
         {
             $set: {
-                coverImage: CoverImagelink.url
+                coverImage: {
+                   url :CoverImagelink.url,
+                   public_Id : CoverImagelink.public_id,
+                } 
             }
         },
         {
@@ -385,7 +397,7 @@ const getWatchHistory = Asynchandler(async (req, res) => {
     const user = await User.aggregate([
         {
             $match: {
-                _id: mongoose.Types.ObjectId(req.user_.id)
+                _id: new mongoose.Types.ObjectId(req.user_.id)
             }
         },
         {

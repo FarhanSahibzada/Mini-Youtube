@@ -18,11 +18,17 @@ const userSchema = new mongoose.Schema({
         trim: true
     },
     avatar: {
-        type: String, // cloudinary url
+        type: {
+            url : String ,
+            public_Id :String
+        },
         required: true
     },
     coverImage: {
-        type: String // cloudinary url
+        type : {
+            url : String ,
+            public_Id : String
+        }
     },
     watchHistory: [{
         type: Schema.Types.ObjectId,

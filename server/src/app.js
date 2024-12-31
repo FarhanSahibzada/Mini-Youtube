@@ -16,7 +16,9 @@ app.use(cookieParser())
 
 // routes import 
 import userRouter from './routes/User.route.js'
+import videoRouter from './routes/Video.route.js'
 // routes decleration 
 app.use('/api/v1/users' , userRouter)
+app.use('/api/v1/videos' ,videoRouter )
 
 export { app }

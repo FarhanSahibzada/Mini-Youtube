@@ -29,11 +29,10 @@ const UploadOnCloudinary = async (localfilepath) => {
 }
 
 const RemoveOldImageFromCloudinary = async (oldAvatarUrl) => {
-    const matches = url.match(/\/v\d+\/(.+)\.\w+$/);
-    const public_id = matches[1]
-    if (matches) {
+    const public_id = oldAvatarUrl.public_Id
+    if (public_id) {
         try {
-            await cloudinary.uploader.destroy(public_id)
+             await cloudinary.uploader.destroy(public_id)
         } catch (error) {
             console.log("failed to delet old avatar  ", error);
         }
