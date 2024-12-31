@@ -1,6 +1,14 @@
 import { Search, Video, } from 'lucide-react';
 import { Dropdown } from './Dropdown';
 import { useNavigate } from 'react-router-dom';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuItem
+} from './ui/dropdown-menu';
+
 
 export default function Navbar() {
   const navigate = useNavigate()
@@ -8,7 +16,7 @@ export default function Navbar() {
     <nav className="bg-white z-50  relative">
       <div className="flex items-center justify-between w-[100%] h-14 px-4">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1 hover:bg-base-200 px-4 py-2 rounded-xl " onClick={()=> navigate('/Home')}>
+          <div className="flex items-center gap-1 hover:bg-base-200 px-4 py-2 rounded-xl " onClick={() => navigate('/Home')}>
             <Video className="text-red-600" size={20} />
             <span className="text-base sm:text-xl font-semibold">YouTube</span>
           </div>
@@ -27,11 +35,19 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="p-2 hover:bg-gray-100 rounded-full">
-            <Video size={24} />
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="p-2 hover:bg-gray-100 rounded-full">
+                <Video size={24} />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuSeparator />
+            <DropdownMenuContent className='w-40 rounded-xl'>
+               <DropdownMenuItem className='rounded-xl' onClick={()=> navigate('/upload-video')}>Upload Video</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <button className="p-2 hover:bg-gray-100 rounded-full ">
-            <Dropdown/>
+            <Dropdown />
           </button>
         </div>
       </div>

@@ -43,7 +43,7 @@ export function Dropdown() {
                         alt="" className='w-full h-full object-cover rounded-full' />
                 </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
+            <DropdownMenuContent className="w-56 rounded-xl">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>

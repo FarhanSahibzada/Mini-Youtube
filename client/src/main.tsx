@@ -11,6 +11,7 @@ import SignUpForm from './pages/SignUpForm.tsx'
 import AuthLayout from './components/Authlayout/AuthLayout.tsx'
 import Profile from './pages/Profile.tsx'
 import YouTubeWatchPage from './pages/YoutubeWatchPage.tsx'
+import UploadVideo from './pages/UploadVideo.tsx'
 
 
 
@@ -41,6 +42,14 @@ const route = createBrowserRouter([
         element: (
           <AuthLayout authentication={false}>
             <SignUpForm />
+          </AuthLayout>
+        )
+      },
+      {
+        path: '/upload-video',
+        element: (
+          <AuthLayout authentication>
+            <UploadVideo />
           </AuthLayout>
         )
       },

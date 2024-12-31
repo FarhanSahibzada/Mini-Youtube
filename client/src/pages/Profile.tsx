@@ -23,11 +23,15 @@ export default function Profile() {
         }
     };
     const userData = useSelector((state : RootState) => state.auth.userLogin)
-
+  
     return (
         <div className="w-full">
             {/* Banner */}
-            <div className="w-full h-[200px] bg-gradient-to-r from-gray-400 to-gray-900"></div>
+            <div className="w-full h-[200px] bg-gradient-to-r from-gray-400 to-gray-900">
+                {userData?.coverimage && (
+                    <img src={userData?.coverimage} alt="" className='w-full h-full object-cover' />
+                )}
+            </div>
 
             {/* Profile Info Section */}
             <div className="max-w-6xl mx-auto px-4 py-4">
