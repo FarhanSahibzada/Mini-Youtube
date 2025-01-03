@@ -15,7 +15,7 @@ export default function AuthLayout({ children, authentication = true }: authlayo
    
     useEffect(() => {
         if (authentication && userstatus !== authentication) {
-            navigate('/Login')
+            navigate('/sign-in')
         } else if (!authentication && userstatus !== authentication) {
             navigate('/')
         }

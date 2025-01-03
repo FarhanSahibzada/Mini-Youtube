@@ -6,8 +6,8 @@ type UserInfo = {
   username: string;
   email: string;
   fullname?: string;
-  avatar: string;
-  coverimage?: string;
+  avatar: { url : string };
+  coverimage?: {url : string};
 };
 
 type InitialState = {

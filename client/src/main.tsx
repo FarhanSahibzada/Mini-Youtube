@@ -62,7 +62,7 @@ const route = createBrowserRouter([
         )
       },
       {
-        path: 'watch',
+        path: 'watch/:id',
         element: (
           <AuthLayout authentication>
             <YouTubeWatchPage />

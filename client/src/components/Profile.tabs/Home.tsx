@@ -2,16 +2,18 @@ import library from '@/assest/Videofile.json'
 import Card, { videoProps } from '../Card';
 import ReactPlayer from 'react-player';
 
+
 function Home() {
   const latestvideo = library[0];
   const data = library.slice(1)
+  
+
   return (
     <div className='w-full px-4 '>
       <div className='h-120 w-full bg-blue mt-3 flex md:flex-row flex-col  gap-10 items-start'>
         <div className='rounded-xl bg-red-400 overflow-hidden ' style={{width : '420px' , height :'210px'}}>
       <ReactPlayer
        url={"https://www.youtube.com/watch?v=whfPBZmNtd4"}
-         light={true}
           width={"420px"} 
           height={'210px'} 
           controls={true} 

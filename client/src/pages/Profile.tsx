@@ -3,7 +3,7 @@ import Playlist from '@/components/Profile.tabs/Playlist';
 import Videos from '@/components/Profile.tabs/Videos';
 import { RootState } from '@/store/Store';
 import { Bell, UserCheck2 } from 'lucide-react';
-import { useState } from 'react';
+import {  useState } from 'react';
 import { useSelector } from 'react-redux';
 
 export default function Profile() {
@@ -23,13 +23,13 @@ export default function Profile() {
         }
     };
     const userData = useSelector((state : RootState) => state.auth.userLogin)
-  
+    
     return (
         <div className="w-full">
             {/* Banner */}
             <div className="w-full h-[200px] bg-gradient-to-r from-gray-400 to-gray-900">
                 {userData?.coverimage && (
-                    <img src={userData?.coverimage} alt="" className='w-full h-full object-cover' />
+                    <img src={userData?.coverimage.url} alt="" className='w-full h-full object-cover' />
                 )}
             </div>
 
@@ -39,7 +39,7 @@ export default function Profile() {
                     {/* Avatar */}
                     <div className="w-24 h-24 rounded-full overflow-hidden -mt-8 ring-8 ring-white">
                         <img
-                            src= {userData?.avatar ||"https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop"}
+                            src= {userData?.avatar.url ||"https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop"}
                             alt="Channel Avatar"
                             className="w-full h-full object-cover"
                         />

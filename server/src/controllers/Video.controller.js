@@ -119,13 +119,53 @@ const publishVideo = Asynchandler(async (req, res) => {
 const getVideoById = Asynchandler(async (req, res) => {
     const { videoId } = req.params;
 
+    const video = await Video.updateOne(
+        { _id: videoId },
+        { $inc: { views: 1 } }
+    )
 
-    const video = await Video.findByIdAndUpdate(videoId, { $inc: { views: 1 } }, { new: true })
-    const history = await User.findByIdAndUpdate(req.user?._Id, { $addToSet: { watchHistory: videoId } })
+    const Videos = await Video.aggregate([
+        {
+            $match: {
+                _id: new mongoose.Types.ObjectId(videoId)
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "ownerDetails",
+                pipeline: [
+                    {
+                        $addFields: {
+                            watchHistory: {
+                                $concatArrays: [
+                                    '$watchHistory',
+                                    [{ videoId: '$_id' }]
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            username: 1,
+                            avatar: 1,
+                        }
+                    }
+                ]
+
+            },
+        },
+        {
+            $unwind : "$ownerDetails"
+        }
+    ])
+
 
     return res.
         status(200)
-        .json(new ApiResponse(200, video, "Video is completely uploaded!"))
+        .json(new ApiResponse(200, Videos, "Video is completely uploaded!"))
 })
 
 const updateVideo = Asynchandler(async (req, res) => {

@@ -1,36 +1,35 @@
+import { videoType } from "@/pages/Home";
+import { Link } from "react-router-dom";
 
-export interface videoProps {
-    thumbnail: string,
-    title: string,
-    description: string,
-    owner: string
-}
 
 interface CardProps {
-    items: videoProps;
+    items: videoType;
     profileshow?: boolean; // Make profileshow optional with a default value
 }
 
 function Card({ items, profileshow = true }: CardProps) {
+
     return (
-        <div className="card card-compact  bg-base-100  min-h-60   overflow-hidden">
-            <figure>
-                <img
-                    src={items.thumbnail}
-                    alt="Shoes"
-                    className="w-[600px]"
-                />
-            </figure>
-            <div className="card-body">
-                <div className="flex gap-2">
-                    {profileshow && (
-                        <img src={items.thumbnail} alt="" className='w-12 h-12 object-cover rounded-full' />
-                    )}
-                    <h2 className="card-title">{items.title}</h2>
+        <div className="card card-compact  bg-base-100  min-h-60   overflow-hidden cursor-pointer">
+            <Link to={`/watch/${items._id}`}>
+                <figure>
+                    <img
+                        src={items.thumbnail.url}
+                        alt="Shoes"
+                        className="w-[600px]"
+                    />
+                </figure>
+                <div className="card-body">
+                    <div className="flex gap-2">
+                        {profileshow && (
+                            <img src={items.ownerDetails.avatar.url} alt="" className='w-12 h-12 object-cover rounded-full' />
+                        )}
+                        <h2 className="card-title">{items.title}</h2>
+                    </div>
+                    <p>{items.ownerDetails.username}</p>
+                    <p>{items.views} views</p>
                 </div>
-                <p>{items.description}</p>
-                <p>{items.owner}</p>
-            </div>
+            </Link>
         </div>
     )
 }
