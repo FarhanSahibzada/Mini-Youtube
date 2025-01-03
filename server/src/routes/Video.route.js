@@ -1,9 +1,12 @@
 import { Router } from "express";
 import { Upload } from '../middlewares/multer.middleware.js';
 import { VerifyJWT } from "../middlewares/Auth.middleware.js"
-import { getVideoById, publishVideo, updateVideo } from "../controllers/Video.controller.js";
+import { deleteVideo, getAllVideos, getVideoById, publishVideo, updateVideo } from "../controllers/Video.controller.js";
 
 const router = Router()
+
+
+router.route('/').get(getAllVideos)
 
 router.route('/upload-video').post(
     Upload.fields([
@@ -20,9 +23,9 @@ router.route('/upload-video').post(
     VerifyJWT,
     publishVideo
 )
-
 router.route('/watch/:videoId').get(VerifyJWT , getVideoById)
-router.route('/update/:videoId').get(VerifyJWT , updateVideo)
+router.route('/update/:videoId').patch(VerifyJWT , updateVideo)
+router.route('/delet/:videoId').delete(VerifyJWT , deleteVideo)
 
 
 export default router;

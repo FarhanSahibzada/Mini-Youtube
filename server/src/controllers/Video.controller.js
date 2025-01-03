@@ -8,38 +8,51 @@ import { User } from "../modal/User.modal.js";
 
 
 const getAllVideos = Asynchandler(async (req, res) => {
-    const { page = 1, limit = 10, sortBy = "createdAt", sortType = "desc", userId } = req.query;
-    if (!userId) {
-        throw new ApiError(400, "can not gettting the userId ");
+    const { page = 1, limit = 10, query = "", sortBy = "createdAt", sortType = "desc", userId } = req.query;
+
+    const pipeline = [];
+
+    if (userId) {
+        pipeline.push({
+            $match: {
+                owner: mongoose.Types.ObjectId(userId)
+            }
+        })
     }
-  
-    const pipeline = [
-        {
-            $match: { owner: new mongoose.Types.ObjectId(userId) }
-        },
-        {
-            $sort: {
-                [sortBy]: sortType === 'asc' ? 1 : -1
+
+    if (query) {
+        pipeline.push({
+            $match: {
+                title: { $regex: query, $options: "i" }
             }
-        },
-        {
-            $lookup: {
-                from: 'users',
-                localField: "owner",
-                foreignField: "_id",
-                as: 'ownerDetails',
-                pipeline: [
-                    {
-                        $project: {
-                            username: 1,
-                            avatar: 1
-                        }
+        })
+    }
+    pipeline.push({
+        $sort: {
+            [sortBy]: sortType == 'asc' ? 1 : -1
+        }
+    })
+
+    pipeline.push({
+        $lookup: {
+            from: "users",
+            localField: "owner",
+            foreignField: "_id",
+            as: "ownerDetails",
+            pipeline: [
+                {
+                    $project: {
+                        username: 1,
+                        avatar: 1
                     }
-                ]
-            }
-        },
-        { $unwind: "$ownerDetails" } // Correct syntax for $unwind
-    ];
+                }
+            ]
+        }
+    }
+    )
+    pipeline.push({
+        $unwind: "$ownerDetails"
+    })
 
     const options = {
         page: parseInt(page, 10),
@@ -55,22 +68,25 @@ const getAllVideos = Asynchandler(async (req, res) => {
 
 const publishVideo = Asynchandler(async (req, res) => {
     const { title, description } = req.body;
+
     if (
         [title, description].some((field) => field?.trim() == "")
     ) {
         throw new ApiError(400, "Can't get the video data");
     }
-    const videofile = req.files?.VideoFile[0]?.path;
+    const videofile = req.files?.videoFile[0]?.path;
     const thumbnailfile = req.files?.thumbnail[0]?.path;
-    if (!(videofile && thumbnailfile)) {
+
+    if (!videofile || !thumbnailfile) {
         throw new ApiError(400, "can't not get the files");
     }
     const videoFile = await UploadOnCloudinary(videofile)
     const thumbnail = await UploadOnCloudinary(thumbnailfile)
-    if (!(videoFile && thumbnail)) {
+
+    if (!videoFile || !thumbnail) {
         throw new ApiError(400, "can't not get the files link from cloudinary");
     }
-    const user = await User.findById(req.user?._id).select("-passowrd -resfreshToken")
+    const user = req.user._id;
 
     const video = await Video.create({
         videoFile: {
@@ -88,32 +104,28 @@ const publishVideo = Asynchandler(async (req, res) => {
         ispublish: true,
         owner: user
     })
-    const createdVideo = Video.findById(video._id)
 
-    if (createdVideo) {
+    const createdVideo = await Video.findById(video._id).select(" -ispublish")
+
+    if (!createdVideo) {
         throw new ApiError(500, "something went while registering the user");
     }
 
     return res
         .status(200)
-        .json(new ApiResponse(200, createdVideo, "Video is Successfully upload!"))
+        .json(new ApiResponse(200, createdVideo, "Video is successfully uploaded!"))
 })
 
 const getVideoById = Asynchandler(async (req, res) => {
     const { videoId } = req.params;
-    const Videoo = await Video.findById(videoId)
-    if (!Videoo) {
-        throw new ApiError(400, "Can't get the vidoe please try again");
-    }
 
-    await Promise.all([
-        Video.findByIdAndUpdate(videoId, { $inc: { views: 1 } }),
-        User.findByIdAndUpdate(req.user?._Id, { $addToSet: { watchHistory: videoId } })
-    ]);
+
+    const video = await Video.findByIdAndUpdate(videoId, { $inc: { views: 1 } }, { new: true })
+    const history = await User.findByIdAndUpdate(req.user?._Id, { $addToSet: { watchHistory: videoId } })
 
     return res.
         status(200)
-        .json(new ApiResponse(200, Videoo, "Video is completely uploaded!"))
+        .json(new ApiResponse(200, video, "Video is completely uploaded!"))
 })
 
 const updateVideo = Asynchandler(async (req, res) => {
@@ -191,6 +203,7 @@ const deleteVideo = Asynchandler(async (req, res) => {
 
 
 export {
+    getAllVideos,
     publishVideo,
     getVideoById,
     updateVideo,
