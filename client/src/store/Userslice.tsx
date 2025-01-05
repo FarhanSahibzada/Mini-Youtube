@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type UserInfo = {
-  id: string;
+  _id: string;
   watchHistory: Array<object>;
   username: string;
   email: string;

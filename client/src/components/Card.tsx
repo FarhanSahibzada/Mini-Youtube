@@ -1,4 +1,5 @@
 import { videoType } from "@/pages/Home";
+import moment from "moment";
 import { Link } from "react-router-dom";
 
 
@@ -8,6 +9,9 @@ interface CardProps {
 }
 
 function Card({ items, profileshow = true }: CardProps) {
+
+    const createdAt  = items?.createdAt;
+    const relatime = moment(createdAt).fromNow()
 
     return (
         <div className="card card-compact  bg-base-100  min-h-60   overflow-hidden cursor-pointer">
@@ -27,7 +31,7 @@ function Card({ items, profileshow = true }: CardProps) {
                         <h2 className="card-title">{items.title}</h2>
                     </div>
                     <p>{items.ownerDetails.username}</p>
-                    <p>{items.views} views</p>
+                    <p>{items.views}views - {relatime}</p>
                 </div>
             </Link>
         </div>

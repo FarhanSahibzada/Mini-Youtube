@@ -11,6 +11,7 @@ export interface videoType {
   views: number,
   duration : number,
   owner : string,
+  createdAt : string ,
   ownerDetails : {
     id: string  ,
     avatar : {url : string} ,

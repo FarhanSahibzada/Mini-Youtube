@@ -15,7 +15,7 @@ const getAllVideos = Asynchandler(async (req, res) => {
     if (userId) {
         pipeline.push({
             $match: {
-                owner: mongoose.Types.ObjectId(userId)
+                owner: new mongoose.Types.ObjectId(userId)
             }
         })
     }

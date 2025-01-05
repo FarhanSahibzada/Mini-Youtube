@@ -39,7 +39,7 @@ export function Dropdown() {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <div className="w-12 h-12 rounded-full  ">
-                    <img src={activeUser?.avatar || 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop'}
+                    <img src={activeUser?.avatar.url || 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop'}
                         alt="" className='w-full h-full object-cover rounded-full' />
                 </div>
             </DropdownMenuTrigger>
