@@ -3,27 +3,47 @@ import Playlist from '@/components/Profile.tabs/Playlist';
 import Videos from '@/components/Profile.tabs/Videos';
 import { RootState } from '@/store/Store';
 import { Bell, UserCheck2 } from 'lucide-react';
-import {  useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { videoType } from './Home';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 export default function Profile() {
     const [currentTab, setCurrentTab] = useState('Home');
     const tabs = ['Home', 'Videos', 'Playlist'];
+    const [videoList, setVideoList] = useState<Array<videoType>>([])
+    const userData = useSelector((state: RootState) => state.auth.userLogin)
+    const { id } = useParams()
+
+      useEffect(() => {
+        const getVideos = async () => {
+          try {
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/videos?userId=${userData?._id || id}`, { withCredentials: true })
+            if (response && response.data) {
+              setVideoList(response.data.data.docs)
+            }
+          } catch (error) {
+            console.log("cannot get the Please try again ", error)
+            alert("Refresh the Page")
+          }
+        }
+        getVideos()
+      }, [userData, id])
 
     const RenderTab = () => {
         switch (currentTab) {
             case 'Home':
-                return <Home />;
+                return <Home data={videoList}/>;
             case 'Videos':
-                return <Videos />;
+                return <Videos data={videoList} />;
             case 'Playlist':
                 return <Playlist />;
             default:
                 return <div>No content available</div>;
         }
-    };
-    const userData = useSelector((state : RootState) => state.auth.userLogin)
-    
+    }
+
     return (
         <div className="w-full">
             {/* Banner */}
@@ -39,7 +59,7 @@ export default function Profile() {
                     {/* Avatar */}
                     <div className="w-24 h-24 rounded-full overflow-hidden -mt-8 ring-8 ring-white">
                         <img
-                            src= {userData?.avatar.url ||"https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop"}
+                            src={userData?.avatar.url || "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop"}
                             alt="Channel Avatar"
                             className="w-full h-full object-cover"
                         />
@@ -53,7 +73,7 @@ export default function Profile() {
                             <span>•</span>
                             <span>1.2M subscribers</span>
                             <span>•</span>
-                            <span>420 videos</span>
+                            <span>{videoList.length}</span>
                         </div>
                         <p className="mt-2 text-sm text-gray-600">
                             Creating awesome tech content since 2015. New videos every week!
@@ -80,11 +100,10 @@ export default function Profile() {
                         {tabs.map((tab) => (
                             <button
                                 key={tab}
-                                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                                    tab === currentTab
-                                        ? 'border-black text-black'
-                                        : 'border-transparent text-gray-500 hover:text-black hover:border-gray-300'
-                                }`}
+                                className={`py-4 px-1 border-b-2 font-medium text-sm ${tab === currentTab
+                                    ? 'border-black text-black'
+                                    : 'border-transparent text-gray-500 hover:text-black hover:border-gray-300'
+                                    }`}
                                 onClick={() => setCurrentTab(tab)}
                             >
                                 {tab}
@@ -99,3 +118,4 @@ export default function Profile() {
         </div>
     );
 }
+

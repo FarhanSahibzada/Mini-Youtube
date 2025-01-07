@@ -1,3 +1,4 @@
+import { useStopPropagationandNavigate } from "@/hooks/StopPagination";
 import { videoType } from "@/pages/Home";
 import moment from "moment";
 import { Link } from "react-router-dom";
@@ -12,7 +13,7 @@ function Card({ items, profileshow = true }: CardProps) {
 
     const createdAt  = items?.createdAt;
     const relatime = moment(createdAt).fromNow()
-
+ const {onStartShouldSetResponder , onTouchEnd} = useStopPropagationandNavigate()
     return (
         <div className="card card-compact  bg-base-100  min-h-60   overflow-hidden cursor-pointer">
             <Link to={`/watch/${items._id}`}>
@@ -24,7 +25,7 @@ function Card({ items, profileshow = true }: CardProps) {
                     />
                 </figure>
                 <div className="card-body">
-                    <div className="flex gap-2">
+                    <div className="flex gap-2" onMouseDown={onStartShouldSetResponder}  onClick={(e)=> onTouchEnd(e,`/my-profile/${items._id}` )}>
                         {profileshow && (
                             <img src={items.ownerDetails.avatar.url} alt="" className='w-12 h-12 object-cover rounded-full' />
                         )}

@@ -1,17 +1,20 @@
+import { RootState } from '@/store/Store';
 import { Home, Clock, PlaySquare, Menu, User } from 'lucide-react';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { NavLink} from 'react-router-dom';
 
-const menuItems = [
-    { icon: Home, label: 'Home', page: "Home" },
-    { icon: PlaySquare, label: 'Subscriptions', page: "Subcriptions" },
-    { icon: Clock, label: 'History', page: 'History' },
-    { icon: User, label: 'You', page: "my-profile" },
-];
+
 
 export default function Sidebar() {
     const [showBar, setShowBar] = useState(false)
-
+    const loginUser = useSelector((state : RootState)=> state.auth.userLogin)
+    const menuItems = [
+        { icon: Home, label: 'Home', page: "Home" },
+        { icon: PlaySquare, label: 'Subscriptions', page: "Subcriptions" },
+        { icon: Clock, label: 'History', page: 'History' },
+        { icon: User, label: 'You', page: `my-profile/${loginUser?._id}` },
+    ];
     return (
         <div>
             <div className='h-14  bg-white ps-4 hidden sm:inline-block pt-2' onClick={() => setShowBar(!showBar)}>
@@ -19,7 +22,7 @@ export default function Sidebar() {
                     <Menu size={24} />
                 </button>
             </div>
-            <aside className={`${!showBar ? "sm:w-52 " : "sm:w-0 sm:ms-52"} w-[100%]   rounded-lg bg-white duration-200  overflow-y-auto overflow-hidden `}>
+            <aside className={`${!showBar ? "sm:w-52 " : "sm:w-0 sm:ms-20"} w-[100%]   rounded-lg bg-white duration-200  overflow-y-auto overflow-hidden `}>
                 <div className="py-2 flex sm:block"  >
                 {menuItems.map((item) => (
                         <NavLink

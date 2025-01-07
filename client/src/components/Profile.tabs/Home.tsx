@@ -1,33 +1,23 @@
 import Card from '../Card';
 import ReactPlayer from 'react-player';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store/Store';
 import { videoType } from '@/pages/Home';
 import moment from 'moment';
 
+interface Homeprops {
+  data: Array<videoType>
+}
 
-function Home() {
+function Home({ data }: Homeprops) {
   const [videoList, setVideoList] = useState<Array<videoType>>([])
-  const userid = useSelector((state: RootState) => state.auth.userLogin)?._id;
-  useEffect(() => {
-    const getVideos = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/videos?userId=${userid}`, { withCredentials: true })
-        if (response && response.data) {
-          setVideoList(response.data.data.docs)
-        }
-      } catch (error) {
-        console.log("cannot get the Please try again ", error)
-        alert("Refresh the Page")
-      }
-    }
-    getVideos()
-  }, [userid])
 
+  useEffect(() => {
+    setVideoList(data)
+  }, [data])
+  
   const time = videoList[0]?.createdAt;
   const relatime = moment(time).fromNow();
+
   return (
     <div className='w-full px-4 '>
       <div className='h-120 w-full bg-blue mt-3 flex md:flex-row flex-col  gap-10 items-start'>
@@ -37,6 +27,7 @@ function Home() {
             width={"420px"}
             height={'210px'}
             controls={true}
+          // playing={true}
           />
         </div>
         <div>

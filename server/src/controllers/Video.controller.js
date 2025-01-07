@@ -121,7 +121,7 @@ const getVideoById = Asynchandler(async (req, res) => {
 
     const video = await Video.updateOne(
         { _id: videoId },
-        { $inc: { views: 1 } }
+        { $inc: { views: 0.5 } }
     )
 
     const Videos = await Video.aggregate([

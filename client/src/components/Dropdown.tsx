@@ -47,7 +47,12 @@ export function Dropdown() {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <Link to={'/my-profile'}>
+                    <Link to={`/Home`}>
+                        <DropdownMenuItem >
+                            Home
+                        </DropdownMenuItem>
+                    </Link>
+                    <Link to={`/my-profile/${activeUser?._id}`}>
                         <DropdownMenuItem >
                             Profile
                         </DropdownMenuItem>
