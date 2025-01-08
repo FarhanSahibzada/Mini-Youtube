@@ -10,7 +10,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     return (
         <div className="grid w-full max-w-sm items-center gap-1.5">
             {label && (
-                <label htmlFor={id} className='className="text-sm font-medium'>{label}</label>
+                <label htmlFor={id} className='text-sm font-medium'>{label}</label>
             )}
             <Input
                 type={type}
