@@ -18,7 +18,7 @@ export default function DialogBox({title , children , isDialogOpen , setIsDialog
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} >
             <DialogContent className="sm:max-w-4xl">
                 <DialogHeader>
-                    <DialogTitle>{title}</DialogTitle>
+                    <DialogTitle className="font-bold text-2xl">{title}</DialogTitle>
                 </DialogHeader>
                 {children}
             </DialogContent>

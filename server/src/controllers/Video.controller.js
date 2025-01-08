@@ -4,7 +4,6 @@ import { ApiResponse } from '../utils/APIResponse.js';
 import { RemoveOldImageFromCloudinary, UploadOnCloudinary, } from '../Service/Cloudinary.js';
 import { Asynchandler } from "../utils/Asynchandler.js";
 import mongoose from "mongoose";
-import { User } from "../modal/User.modal.js";
 
 
 const getAllVideos = Asynchandler(async (req, res) => {

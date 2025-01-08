@@ -54,24 +54,43 @@ function UploadVideo() {
                                             placeholder="Title"
                                             {...register("videoTitle", { required: "Title is required" })}
                                         />
-
                                         <textarea
                                             className="w-full h-28 mt-4 bg-transparent border-2 border-gray-600 focus:outline-gray-900 text-black text-base rounded-xl px-3 py-2 text-start"
                                             placeholder="Description"
                                             {...register("videoDescription", { required: "Description is required" })}
                                         />
+                                        <div className="mt-2">
+                                            <h1 className="text-lg font-semibold mt-2">Thumbnail</h1>
+                                            <label htmlFor="image" className='cursor-pointer hover:opacity-35 '>
+                                                <button className="bg-gray-900 font-semibold px-2 py-1.5 text-white
+                                                rounded-2xl mt-2">Upload Thumbnail</button>
+                                            </label>
+                                            <input
+                                                id="image"
+                                                type="file"
+                                                accept="image/*"
+                                                style={{ display: 'none' }}
+                                                {...register('thumbnail' , {required : "thumbnail is requried "})}
+                                            />
+                                        </div>
+                                        <div className="mt-3">
+                                            <h1 className="font-semibold text-lg">Playlist</h1>
+                                        {/* playlist work after backend */}
+                                        </div>
                                     </div>
-                                    <div className="rounded-xl bg-white mt-10" style={{ width: "320px", height: "180px" }}>
-                                        <ReactPlayer
-                                            url={"https://www.youtube.com/watch?v=JZjAg6fK-BQ"}
-                                            width={"320x"}
-                                            height={'180px'}
-                                            controls={true}
-                                        />
+                                    <div className="mt-10" >
+                                        <div className="rounded-2xl bg-white overflow-hidden " style={{ width: "320px", height: "180px" }}>
+                                            <ReactPlayer
+                                                url={"https://www.youtube.com/watch?v=JZjAg6fK-BQ"}
+                                                width="100%"
+                                                height="100%"
+                                                controls={true}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            /// playlist backend and front-end work
+
                         )}
 
                         <div className="absolute right-4 bottom-4" onClick={() => setDisplayNum((prev) => prev + 1)}>
@@ -81,7 +100,7 @@ function UploadVideo() {
 
                 } />
 
-            </form>
+            </form >
         </>
     )
 }
