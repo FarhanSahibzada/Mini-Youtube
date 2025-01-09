@@ -62,6 +62,14 @@ const getPlaylistById = Asynchandler(async (req, res) => {
             $match: {
                 _id: new mongoose.Types.ObjectId(playlistId)
             }
+        },
+        {
+            $lookup : {
+                from : "videos",
+                localField : "videos",
+                foreignField : "_id",
+                as :"videos"
+            }
         }
     ])
 

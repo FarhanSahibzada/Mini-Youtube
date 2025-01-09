@@ -27,7 +27,6 @@ export default function SignUpForm() {
             setImageError('Image is Required')
             return
         }
-        console.log(imagefile[0])
         const databundle = new FormData()
         databundle.append("username", data.username);
         databundle.append("email", data.email);
