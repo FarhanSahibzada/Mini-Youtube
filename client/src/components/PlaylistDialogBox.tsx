@@ -1,6 +1,7 @@
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
@@ -19,6 +20,7 @@ export default function PlaylistDialogBox({title , children , isDialogOpen , set
             <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
                     <DialogTitle className="font-bold text-2xl">{title}</DialogTitle>
+                    <DialogDescription> </DialogDescription>
                 </DialogHeader>
                 {children}
             </DialogContent>

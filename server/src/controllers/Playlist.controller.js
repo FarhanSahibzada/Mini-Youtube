@@ -43,7 +43,7 @@ const getUserPlaylist = Asynchandler(async (req, res) => {
                 as: "videos"
             }
         }
-        
+
     ])
 
     return res
@@ -64,11 +64,11 @@ const getPlaylistById = Asynchandler(async (req, res) => {
             }
         },
         {
-            $lookup : {
-                from : "videos",
-                localField : "videos",
-                foreignField : "_id",
-                as :"videos"
+            $lookup: {
+                from: "videos",
+                localField: "videos",
+                foreignField: "_id",
+                as: "videos"
             }
         }
     ])
@@ -80,7 +80,8 @@ const getPlaylistById = Asynchandler(async (req, res) => {
 
 const addVideoToPlaylist = Asynchandler(async (req, res) => {
     const { playlistId, videoId } = req.params
-
+    console.log(playlistId)
+    console.log(videoId)
     if (!playlistId || !videoId) {
         throw new ApiError(400, "Please provide the playlist Id and video Id")
     }

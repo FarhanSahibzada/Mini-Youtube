@@ -32,10 +32,10 @@ router.route('/register').post(
 )
 
 router.route("/login").post(loginUser)
+router.route("/refresh-token").post(refreshAccessToken)
 
 // secure Routes 
 router.route("/logout").post(VerifyJWT, logoutUser)
-router.route("/refresh-token").post(refreshAccessToken)
 router.route('/change-passowrd').post(VerifyJWT, changeCurrentPassword)
 router.route('/current-user').get(VerifyJWT, getCurrentUser)
 router.route('/current-account').patch(VerifyJWT, updateDetails)

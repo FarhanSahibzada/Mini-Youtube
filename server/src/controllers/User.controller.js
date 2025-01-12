@@ -175,26 +175,25 @@ const logoutUser = Asynchandler(async (req, res) => {
 })
 
 const refreshAccessToken = Asynchandler(async (req, res) => {
-    const Token = req.cookie?.refeshToken || req.body.refeshToken
+
+    const Token = await req.cookies?.refreshToken || req.body.refeshToken
     if (!Token) {
         throw new ApiError(401, "unAuthorized Token");
     }
     try {
         const verifyToken = jwt.verify(Token, process.env.REFRESH_TOKEN_SECRET)
         const user = await User.findOne(verifyToken?._id)
+     
         if (!user) {
             throw new ApiError("401", "Invalid Refresh token");
-        }
-
-        if (Token != user.refreshToken) {
-            throw new ApiError(401, "Refresh token is experied or used");
         }
 
         const { AccessToken, RefrehToken } = await generateAccessTokenAndResfreshToken(user._id)
 
         const options = {
             httpOnly: true,
-            secure: true
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 7 * 24 * 60 * 60 * 1000,
         }
 
         return res
