@@ -54,7 +54,7 @@ const registerUser = Asynchandler(async (req, res) => {
     if (existedUser) {
         throw new ApiError(409, 'User with username and email is already exist  ')
     }
-
+    
     const avatarfilepath = req.files?.avatar[0]?.path;
 
     let Coverimagepath;
@@ -75,14 +75,14 @@ const registerUser = Asynchandler(async (req, res) => {
     }
 
     const user = await User.create({
-        avatar:{
-          url : avatar.url,
-           public_Id : avatar.public_id 
-        } ,
-        coverImage: {
-            url : coverimage.url ,
-            public_Id : coverimage.public_id 
+        avatar: {
+            url: avatar.url,
+            public_Id: avatar.public_id
         },
+        coverImage: coverimage ? {
+            url: coverimage.url,
+            public_Id: coverimage?.public_id
+        } : undefined,
         email,
         password,
         username: username.toLowerCase()
@@ -183,7 +183,7 @@ const refreshAccessToken = Asynchandler(async (req, res) => {
     try {
         const verifyToken = jwt.verify(Token, process.env.REFRESH_TOKEN_SECRET)
         const user = await User.findOne(verifyToken?._id)
-     
+
         if (!user) {
             throw new ApiError("401", "Invalid Refresh token");
         }
@@ -245,15 +245,15 @@ const getCurrentUser = Asynchandler(async (req, res) => {
 })
 
 const updateDetails = Asynchandler(async () => {
-    const { fullName, email } = req.body;
-    if (!fullName || !email) {
+    const { username, email } = req.body;
+    if (!username || !email) {
         throw new ApiError(401, "Something was wrong");
     }
     const userUpdate = await User.findByIdAndUpdate(
         req.user._id,
         {
             $set: {
-                fullName,
+                username,
                 email: email
             }
         }, {
@@ -281,13 +281,13 @@ const updateAvatar = Asynchandler(async (req, res) => {
     }
     const oldAvatar = user.avatar;
     user.avatar = {
-        url : avatarlink.url ,
-        public_Id : avatarlink.public_id
+        url: avatarlink.url,
+        public_Id: avatarlink.public_id
     };
     await user.save()
 
     if (oldAvatar) {
-         await RemoveOldImageFromCloudinary(oldAvatar)
+        await RemoveOldImageFromCloudinary(oldAvatar)
     } else {
         throw new ApiError(500, "old avatar link is not found try again");
     }
@@ -297,7 +297,7 @@ const updateAvatar = Asynchandler(async (req, res) => {
         .json(new ApiResponse(200, user, "Avatar Successfully Updated"))
 })
 
-const updateCoverIImage = Asynchandler(async (req, res) => {
+const updateCoverImage = Asynchandler(async (req, res) => {
     const coverLocalPath = req.file?.path;
     if (!coverLocalPath) {
         throw new ApiError(401, "Covermage  is missing");
@@ -306,20 +306,19 @@ const updateCoverIImage = Asynchandler(async (req, res) => {
     if (!CoverImagelink) {
         throw new ApiError(401, "Error while Uploadicng CoverImage");
     }
-    const user = await User.findByIdAndUpdate(
-        req.user._id,
-        {
-            $set: {
-                coverImage: {
-                   url :CoverImagelink.url,
-                   public_Id : CoverImagelink.public_id,
-                } 
-            }
-        },
-        {
-            new: true
-        }
-    ).select("-password")
+    const user = await User.findById(req.user._id)
+    const oldCoverImage = user.coverImage;
+
+    user.coverImage = {
+        url: CoverImagelink.url,
+        public_Id: CoverImagelink.public_id
+    }
+
+    await user.save()
+
+    if (oldCoverImage) {
+        await RemoveOldImageFromCloudinary(oldCoverImage)
+    }
 
     return res
         .status(200)
@@ -454,7 +453,7 @@ export {
     getCurrentUser,
     updateDetails,
     updateAvatar,
-    updateCoverIImage,
+    updateCoverImage,
     getChannelProfile,
     getWatchHistory
 }

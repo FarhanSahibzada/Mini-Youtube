@@ -12,6 +12,7 @@ import AuthLayout from './components/Authlayout/AuthLayout.tsx'
 import Profile from './pages/Profile.tsx'
 import YouTubeWatchPage from './pages/YoutubeWatchPage.tsx'
 import UploadVideo from './pages/UploadVideo.tsx'
+import Settings from './pages/Settings.tsx'
 
 
 
@@ -58,6 +59,14 @@ const route = createBrowserRouter([
         element: (
           <AuthLayout authentication>
             <Profile />
+          </AuthLayout>
+        )
+      },
+      {
+        path: 'setting-page',
+        element: (
+          <AuthLayout authentication>
+            <Settings />
           </AuthLayout>
         )
       },

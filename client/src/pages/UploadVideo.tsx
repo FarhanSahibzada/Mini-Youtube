@@ -246,7 +246,6 @@ function UploadVideo() {
                                     </div>
                                 </>
                             )}
-
                         </div>
                     </form >
                 } />

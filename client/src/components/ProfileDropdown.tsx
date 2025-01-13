@@ -57,9 +57,11 @@ export function Dropdown() {
                             Profile
                         </DropdownMenuItem>
                     </Link>
+                    <Link to={'/setting-page'}>
                     <DropdownMenuItem>
                         Settings
                     </DropdownMenuItem>
+                    </Link>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogoutbtn}>

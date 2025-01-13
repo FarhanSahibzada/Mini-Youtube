@@ -58,7 +58,7 @@ const YouTubeWatchPage = () => {
                     <div className="lg:col-span-2 space-y-4">
                         {/* Video Player */}
                         ${!video ? (
-                            <div className="aspect-video rounded-xl overflow-hidden bg-">
+                            <div className="aspect-video rounded-xl overflow-hidden ">
                                 <div className="flex justify-center items-center h-full space-x-3 mb-6">
                                     <div className="w-4 h-4 bg-red-500 rounded-full animate-bounce"></div>
                                     <div className="w-4 h-4 bg-red-500 rounded-full animate-bounce delay-100"></div>
@@ -66,7 +66,7 @@ const YouTubeWatchPage = () => {
                                 </div>
                             </div>
                         ) : (
-                            <div className="aspect-video rounded-xl overflow-hidden">
+                            <div className="aspect-video rounded-xl overflow-hidden bg-black">
                                 <ReactPlayer
                                     url={video?.videoFile.url || ""}
                                     width={"100%"}

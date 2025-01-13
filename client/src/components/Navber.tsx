@@ -1,5 +1,5 @@
 import { Search, Video, } from 'lucide-react';
-import { Dropdown } from './Dropdown';
+import { Dropdown } from './ProfileDropdown';
 import { useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
