@@ -29,10 +29,10 @@ function Card({ items, profileshow = true }: CardProps) {
                         {profileshow && (
                             <img src={items.ownerDetails.avatar.url} alt="" className='w-12 h-12 object-cover rounded-full' />
                         )}
-                        <h2 className="card-title">{items.title}</h2>
+                        <h1 className="card-title text-lg">{items.title}</h1>
                     </div>
                     <p>{items.ownerDetails.username}</p>
-                    <p>{items.views}views - {relatime}</p>
+                    <p>{items.views} views - {relatime}</p>
                 </div>
             </Link>
         </div>

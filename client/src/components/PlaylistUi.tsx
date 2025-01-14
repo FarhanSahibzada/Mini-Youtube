@@ -54,7 +54,6 @@ function PlaylistUi({ onPlaylistCreated }: fun) {
                     Create</button>
             </div>
         </div>
-
     )
 }
 

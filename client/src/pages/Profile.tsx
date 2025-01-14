@@ -48,8 +48,8 @@ export default function Profile() {
         <div className="w-full">
             {/* Banner */}
             <div className="w-full h-[200px] bg-gradient-to-r from-gray-400 to-gray-900">
-                {userData?.coverimage && (
-                    <img src={userData?.coverimage.url} alt="" className='w-full h-full object-cover' />
+                {userData?.coverImage?.url && (
+                    <img src={userData?.coverImage.url} alt="" className='w-full h-full object-cover' />
                 )}
             </div>
 

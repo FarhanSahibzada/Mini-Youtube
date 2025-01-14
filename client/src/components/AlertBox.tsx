@@ -7,15 +7,17 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useState } from "react"
+import React from "react"
 
 interface alertProps {
     title: string,
     content: string,
+    isOpen : boolean,
+    setIsOpen : React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export function AlertBox({ title , content }: alertProps) {
-    const [isOpen, setIsOpen] = useState(true)
+export function AlertBox({ title , content,  isOpen , setIsOpen  }: alertProps) {
+    
     return (
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogContent>

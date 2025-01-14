@@ -1,9 +1,9 @@
 import { Separator } from "@/components/ui/separator"
 import AccountCard from "./AccountCard"
-import { useState } from "react"
-import VideoCard from "./VideoCard"
+import {  useState } from "react"
 import SetPassword from "./SetPassword"
 import SetImageCard from "./SetImageCard"
+import VideoCard from "./VideoCard"
 
 export default function SettingPage() {
   const [tab, setTab] = useState('')
@@ -11,7 +11,7 @@ export default function SettingPage() {
     { name: 'Account' },
     { name: 'Videos' }
   ]
-
+ 
   return (
     <div className="space-y-6 p-10 pb-16 md:block w-full h-full">
       <div className="space-y-0.5">
@@ -38,9 +38,7 @@ export default function SettingPage() {
         </aside>
         <div className="space-y-8 w-full">
           {tab == "Videos" ? (
-            // <VideoCard data={}/>
-            <>
-            </>
+             <VideoCard/>
           ) : (
             <>
               <AccountCard />

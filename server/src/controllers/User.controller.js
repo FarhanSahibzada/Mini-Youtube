@@ -54,7 +54,7 @@ const registerUser = Asynchandler(async (req, res) => {
     if (existedUser) {
         throw new ApiError(409, 'User with username and email is already exist  ')
     }
-    
+
     const avatarfilepath = req.files?.avatar[0]?.path;
 
     let Coverimagepath;
@@ -220,6 +220,12 @@ const changeCurrentPassword = Asynchandler(async (req, res) => {
     // use bycript ispasswordcorrect method to oldpassowrd and this who saved in database
 
     const { oldPassword, newPassword } = req.body;
+
+    
+    if (!oldPassword || !newPassword) {
+        throw new ApiError(401 , "can not getting the data")
+    }
+
     const user = await User.findOne(req.user?._id)
     const isPasswordCorrect = await user.isPasswordCorrected(oldPassword)
     if (!isPasswordCorrect) {
@@ -244,8 +250,9 @@ const getCurrentUser = Asynchandler(async (req, res) => {
         ))
 })
 
-const updateDetails = Asynchandler(async () => {
+const updateDetails = Asynchandler(async (req, res) => {
     const { username, email } = req.body;
+
     if (!username || !email) {
         throw new ApiError(401, "Something was wrong");
     }
@@ -253,13 +260,14 @@ const updateDetails = Asynchandler(async () => {
         req.user._id,
         {
             $set: {
-                username,
+                username: username,
                 email: email
             }
         }, {
         new: true
     }
     ).select("-passowrd")
+
     return res
         .status(200)
         .json(new ApiResponse(200, userUpdate, "account details updated"))

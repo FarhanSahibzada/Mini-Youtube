@@ -157,7 +157,7 @@ const getVideoById = Asynchandler(async (req, res) => {
             },
         },
         {
-            $unwind : "$ownerDetails"
+            $unwind: "$ownerDetails"
         }
     ])
 
@@ -169,49 +169,26 @@ const getVideoById = Asynchandler(async (req, res) => {
 
 const updateVideo = Asynchandler(async (req, res) => {
     const { videoId } = req.params
-    const video = await Video.findById(videoId)
-    if (!video) {
-        throw new ApiError(200, "can't match the video id");
-    }
     const { title, description } = req.body;
+
     if (
         [title, description].some((field) => field?.trim() == "")
     ) {
         throw new ApiError(400, "Please fill the fields");
     }
-    const videofile = req.files?.VideoFile[0]?.path;
-    const thumbnailfile = req.files?.thumbnail[0]?.path;
-    if (!(videofile && thumbnailfile)) {
-        throw new ApiError(400, "can't not get the files");
-    }
-    const videoFile = await UploadOnCloudinary(videofile)
-    const thumbnail = await UploadOnCloudinary(thumbnailfile)
-    if (!(videoFile && thumbnail)) {
-        throw new ApiError(400, "can't not get the files link from cloudinary");
-    }
-    const oldvideo = video.videoFile;
-    const oldthumbnail = video.thumbnail;
 
-    video.title = title;
-    video.description = description;
-    video.videoFile = {
-        url: videoFile?.url,
-        public_Id: videoFile.public_id
-    }
-    video.thumbnail = {
-        url: thumbnail?.url,
-        public_Id: thumbnail.public_id
-    };
-    video.duration = videoFile?.duration;
+    const video = await Video.findByIdAndUpdate(
+        videoId,
+        {
+            $set: {
+                title,
+                description
+            }
+        }
+        ,
+        { new: true }
+    )
 
-    await video.save();
-
-    if (oldvideo) {
-        await RemoveOldImageFromCloudinary(videoFile)
-        await RemoveOldImageFromCloudinary(oldthumbnail)
-    } else {
-        throw new ApiError(500, "old avatar link is not found try again");
-    }
 
     return res
         .status(200)
