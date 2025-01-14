@@ -67,7 +67,7 @@ export default function Profile() {
 
                     {/* Channel Info */}
                     <div className="flex-1">
-                        <h1 className="text-2xl font-bold">{userData?.username}</h1>
+                        <h1 className="text-2xl font-bold">{userData?.username.charAt(0).toUpperCase()}{userData?.username.slice(1)}</h1>
                         <div className="flex items-center gap-2 text-gray-600 mt-1">
                             <span className="font-medium">{userData?.email}</span>
                             <span>•</span>
@@ -75,9 +75,6 @@ export default function Profile() {
                             <span>•</span>
                             <span>{videoList.length}</span>
                         </div>
-                        <p className="mt-2 text-sm text-gray-600">
-                            Creating awesome tech content since 2015. New videos every week!
-                        </p>
                     </div>
 
                     {/* Action Buttons */}

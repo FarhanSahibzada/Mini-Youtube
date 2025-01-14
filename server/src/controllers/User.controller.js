@@ -240,7 +240,7 @@ const changeCurrentPassword = Asynchandler(async (req, res) => {
 })
 
 const getCurrentUser = Asynchandler(async (req, res) => {
-    //return  console.log(req.user)
+    
     return res
         .status(200)
         .json(new ApiResponse(

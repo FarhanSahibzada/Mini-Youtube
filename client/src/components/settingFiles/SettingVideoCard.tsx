@@ -6,6 +6,9 @@ import PlaylistDialogBox from "../PlaylistDialogBox";
 import { FieldValues, useForm } from "react-hook-form";
 import axios from "axios";
 import { AlertBox } from "../AlertBox";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/Store";
 
 interface VideosProps {
     data: videoType
@@ -14,12 +17,19 @@ interface errortype {
     title: string,
     description: string
 }
+interface alertData {
+    title?: string,
+    content?: string
+}
 
 export default function SettingVideoCard({ data }: VideosProps) {
     const [videoList, setVideoList] = useState<videoType>()
     const [updateDialog, setUpdateDialog] = useState(false)
     const { register, handleSubmit, formState: { errors } } = useForm<errortype>()
+    const [alertContent, setAlertContent] = useState<alertData>({})
     const [showAlert, setShowAlert] = useState(false)
+    const navigate = useNavigate()
+    const userId  = useSelector((state : RootState)=> state.auth.userLogin)
 
     useEffect(() => {
         setVideoList(data)
@@ -27,18 +37,43 @@ export default function SettingVideoCard({ data }: VideosProps) {
 
     const handleUpdateVideo = async (values: FieldValues, id: string) => {
         try {
-            await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/videos/update/${id}`,
+            const response = await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/videos/update/${id}`,
                 values, { withCredentials: true })
+            if (response && response.data) {
+                setShowAlert(true)
+                setAlertContent({ title: "Video Updated", content: "Video is Successfully Updated!" })
+            }
         } catch (error) {
             console.log("cannot set the data", error)
+            setShowAlert(true)
+            setAlertContent({ title: "Video Updated", content: "Error Please Try again" })
         } finally {
             setUpdateDialog(false)
+        }
+    }
+
+    const handleVideoDelet = async (id: string) => {
+        try {
+            const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/v1/videos/delet/${id}`, { withCredentials: true })
+            if (response && response.data) {
+                setShowAlert(true)
+                setAlertContent({ title: "Video Updated", content: "Video is Successfully Delet" })
+                navigate(`/my-profile/${userId?._id}`)
+            }
+        } catch (error) {
+            console.log("error on delet the video", error)
             setShowAlert(true)
+            setAlertContent({ title: "Video Updated", content: "Video is Successfully Delet" })
         }
     }
     return (
         <>
-        {showAlert && <AlertBox title="Update Video" content="Video is successfully updated!"/>}
+            {showAlert && <AlertBox
+                title={alertContent.title || ""}
+                content={alertContent.content || ""}
+                isOpen={showAlert}
+                setIsOpen={setShowAlert}
+            />}
             <PlaylistDialogBox title="Update Video"
                 isDialogOpen={updateDialog}
                 setIsDialogOpen={setUpdateDialog}
@@ -98,7 +133,9 @@ export default function SettingVideoCard({ data }: VideosProps) {
                             className="py-2 px-3.5 mt-3 bg-gray-800 text-white text-sm font-semibold"
                         >
                             Update
-                        </Button> <Button
+                        </Button>
+                        <Button
+                            onClick={() => handleVideoDelet(data._id)}
                             className="py-2 px-3.5 mt-3 bg-gray-800 text-white text-sm font-semibold"
                         >
                             Delet
