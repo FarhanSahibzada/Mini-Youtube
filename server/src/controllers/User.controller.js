@@ -334,10 +334,12 @@ const updateCoverImage = Asynchandler(async (req, res) => {
 });
 
 const getChannelProfile = Asynchandler(async (req, res) => {
-    const { username } = req.parmas;
+    const { username} = req.params;
+
     if (!username) {
         throw new ApiError(401, "User is not found ");
     }
+
     const channel = await User.aggregate([
         {
             $match: {
@@ -349,15 +351,7 @@ const getChannelProfile = Asynchandler(async (req, res) => {
                 from: "subcriptions",
                 localField: "_id",
                 foreignField: "channel",
-                as: "Subcribers"
-            }
-        },
-        {
-            $lookup: {
-                from: 'subcriptions',
-                localField: "_id",
-                foreignField: "subcriber",
-                as: 'subcribeTo'
+                as: "Subcribers",
             }
         },
         {
@@ -365,12 +359,9 @@ const getChannelProfile = Asynchandler(async (req, res) => {
                 subcriberCount: {
                     $size: "$Subcribers"
                 },
-                channelSubcriberToCount: {
-                    $size: "$subcribeTo"
-                },
                 isSubcribed: {
                     $cond: {
-                        if: { $in: [req.user?._id, "$Subcribers.subcriber"] },
+                        if: { $in:[req.user?._id  ,"$Subcribers.subscriber"] },
                         then: true,
                         else: false
                     }
@@ -382,7 +373,7 @@ const getChannelProfile = Asynchandler(async (req, res) => {
                 username: 1,
                 fullName: 1,
                 subcriberCount: 1,
-                channelSubcriberToCount: 1,
+                isSubcribed: 1,
                 avatar: 1,
                 coverImage: 1,
                 email: 1,
@@ -423,7 +414,6 @@ const getWatchHistory = Asynchandler(async (req, res) => {
                             pipeline: [
                                 {
                                     $project: {
-                                        fullName: 1,
                                         username: 1,
                                         avatar: 1,
                                     }

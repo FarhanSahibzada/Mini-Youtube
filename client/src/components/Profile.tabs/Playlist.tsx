@@ -1,7 +1,6 @@
 import { videoType } from "@/pages/Home"
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
 import Cardstackk from "../Cardstack"
 
 export interface playlistType {
@@ -12,9 +11,12 @@ export interface playlistType {
   videos: [videoType]
 }
 
-function Playlist() {
+interface idProps {
+  id : string | undefined
+}
 
-  const { id } = useParams()
+function Playlist( {id} : idProps) {
+
   const [playlist, setPlaylist] = useState<Array<playlistType>>([])
 
   useEffect(() => {

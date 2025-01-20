@@ -9,6 +9,7 @@ interface Homeprops {
 }
 
 function Home({ data }: Homeprops) {
+  
   const [videoList, setVideoList] = useState<Array<videoType>>([])
 
   useEffect(() => {

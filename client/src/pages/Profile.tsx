@@ -1,44 +1,74 @@
 import Home from '@/components/Profile.tabs/Home';
 import Playlist from '@/components/Profile.tabs/Playlist';
 import Videos from '@/components/Profile.tabs/Videos';
-import { RootState } from '@/store/Store';
-import { Bell, UserCheck2 } from 'lucide-react';
+import { UserCheck2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { videoType } from './Home';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
+
+export interface userProfileType {
+    _id: string,
+    username: string,
+    subcriberCount: number,
+    isSubcribed: boolean,
+    avatar: { url: string },
+    coverImage: { url: string },
+    email: string,
+}
+
 export default function Profile() {
     const [currentTab, setCurrentTab] = useState('Home');
     const tabs = ['Home', 'Videos', 'Playlist'];
+    const [userProfile, setUserProfile] = useState<userProfileType>()
     const [videoList, setVideoList] = useState<Array<videoType>>([])
-    const userData = useSelector((state: RootState) => state.auth.userLogin)
-    const { id } = useParams()
+    const { username } = useParams()
 
-      useEffect(() => {
-        const getVideos = async () => {
-          try {
-            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/videos?userId=${userData?._id || id}`, { withCredentials: true })
-            if (response && response.data) {
-              setVideoList(response.data.data.docs)
+    useEffect(() => {
+        const getuserData = async () => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/users/channel/${username}`, { withCredentials: true })
+                if (response && response.data) {
+                    setUserProfile(response.data?.data)
+                }
+            } catch (error) {
+                console.log("cannot get the Please try again ", error)
+                alert("Refresh the Page")
             }
-          } catch (error) {
-            console.log("cannot get the Please try again ", error)
-            alert("Refresh the Page")
-          }
         }
-        getVideos()
-      }, [userData, id])
+        getuserData()
+    }, [username])
+
+
+    useEffect(() => {
+        if (userProfile?._id) {
+            const getVideos = async () => {
+
+                try {
+                    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/videos?userId=${userProfile?._id}`, { withCredentials: true })
+                    if (response && response.data) {
+                        setVideoList(response.data.data?.docs)
+                    }
+                } catch (error) {
+                    console.log("cannot get the Please try again ", error)
+                    alert("Refresh the Page")
+                }
+            }
+            getVideos()
+        }
+    }, [userProfile])
+
+
 
     const RenderTab = () => {
         switch (currentTab) {
             case 'Home':
-                return <Home data={videoList}/>;
+                return <Home data={videoList} />;
             case 'Videos':
                 return <Videos data={videoList} />;
             case 'Playlist':
-                return <Playlist />;
+                return <Playlist id={userProfile?._id || ""} />;
             default:
                 return <div>No content available</div>;
         }
@@ -48,8 +78,8 @@ export default function Profile() {
         <div className="w-full">
             {/* Banner */}
             <div className="w-full h-[200px] bg-gradient-to-r from-gray-400 to-gray-900">
-                {userData?.coverImage?.url && (
-                    <img src={userData?.coverImage.url} alt="" className='w-full h-full object-cover' />
+                {userProfile?.coverImage?.url && (
+                    <img src={userProfile?.coverImage.url} alt="" className='w-full h-full object-cover' />
                 )}
             </div>
 
@@ -59,7 +89,7 @@ export default function Profile() {
                     {/* Avatar */}
                     <div className="w-24 h-24 rounded-full overflow-hidden -mt-8 ring-8 ring-white">
                         <img
-                            src={userData?.avatar.url || "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop"}
+                            src={userProfile?.avatar.url || "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop"}
                             alt="Channel Avatar"
                             className="w-full h-full object-cover"
                         />
@@ -67,11 +97,11 @@ export default function Profile() {
 
                     {/* Channel Info */}
                     <div className="flex-1">
-                        <h1 className="text-2xl font-bold">{userData?.username.charAt(0).toUpperCase()}{userData?.username.slice(1)}</h1>
+                        <h1 className="text-2xl font-bold">{userProfile?.username.charAt(0).toUpperCase()}{userProfile?.username.slice(1)}</h1>
                         <div className="flex items-center gap-2 text-gray-600 mt-1">
-                            <span className="font-medium">{userData?.email}</span>
+                            <span className="font-medium">{userProfile?.email}</span>
                             <span>•</span>
-                            <span>1.2M subscribers</span>
+                            <span>{userProfile?.subcriberCount} subscribers</span>
                             <span>•</span>
                             <span>{videoList.length}</span>
                         </div>
@@ -79,12 +109,9 @@ export default function Profile() {
 
                     {/* Action Buttons */}
                     <div className="flex gap-3 items-center">
-                        <button className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800">
+                        <button className={`flex items-center gap-2  px-4 py-2 ${userProfile?.isSubcribed ? "bg-slate-200 text-black" : "bg-black text-white"} rounded-full hover:bg-gray-800`}>
                             <UserCheck2 size={20} />
-                            <span>Subscribe</span>
-                        </button>
-                        <button className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full hover:bg-gray-200">
-                            <Bell size={20} />
+                            {userProfile?.isSubcribed ? (<span>Subscribed</span>) : (<span>Subscribe</span>)}
                         </button>
                     </div>
                 </div>

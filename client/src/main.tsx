@@ -55,7 +55,7 @@ const route = createBrowserRouter([
         )
       },
       {
-        path: 'my-profile/:id',
+        path: 'my-profile/:username',
         element: (
           <AuthLayout authentication>
             <Profile />

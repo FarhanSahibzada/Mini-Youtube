@@ -18,6 +18,7 @@ export function Dropdown() {
     const activeUser = useSelector((state: RootState) => state.auth.userLogin)
     const navigate = useNavigate()
 
+
     const handleLogoutbtn = async () => {
         try {
             const userLogout = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/users/logout`,
@@ -52,7 +53,7 @@ export function Dropdown() {
                             Home
                         </DropdownMenuItem>
                     </Link>
-                    <Link to={`/my-profile/${activeUser?._id}`}>
+                    <Link to={`/my-profile/${activeUser?.username}`}>
                         <DropdownMenuItem >
                             Profile
                         </DropdownMenuItem>

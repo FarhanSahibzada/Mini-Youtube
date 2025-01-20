@@ -1,13 +1,15 @@
 import axios from 'axios';
 import {
     ThumbsUp,
-    Download,
     Bell,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { useParams } from 'react-router-dom';
 import moment from 'moment'
+import { videoType } from './Home';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/Store';
 
 export interface videoByIdProps {
     _id: string,
@@ -18,17 +20,34 @@ export interface videoByIdProps {
     views: number,
     duration: number,
     owner: string,
-    createdAt : string,
+    createdAt: string,
     ownerDetails: {
         id: string,
         avatar: { url: string },
         username: string
     },
 }
+export interface playlistType {
+    name: string,
+    description: string,
+    owner: string
+    videos: Array<videoType>
+}
 
 const YouTubeWatchPage = () => {
     const { id } = useParams()
     const [video, setVideo] = useState<videoByIdProps>()
+    const [playlistVideo, setPlaylistVideo] = useState<playlistType | null>(null)
+    const [NextVideos, setNextVideos] = useState<Array<videoByIdProps>>([])
+    const playlistData = useSelector((state: RootState) => state.playlist.currentPlaylist)
+    const [newVideo, setNewVideo] = useState<videoByIdProps | null >(null)
+
+    useEffect(() => {
+        if (playlistData) {
+            setPlaylistVideo(playlistData);
+        }
+    }, [playlistData]);
+
 
 
     useEffect(() => {
@@ -42,20 +61,34 @@ const YouTubeWatchPage = () => {
                 console.log("cannot get the please try again", error)
             }
         }
-
         getVideoById()
     }, [id])
 
-    const createdAt = video?.createdAt;
-    const relativeTime = moment(createdAt).fromNow();
+    useEffect(() => {
+        const NextVideo = async () => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/videos/`, { withCredentials: true })
+                if (response && response.data) {
+                    setNextVideos(response.data.data.docs)
+                }
+            } catch (error) {
+                console.log("can't fetch the next videos", error)
+            }
+        }
 
+        NextVideo();
+    }, [])
+
+    const handleOnClick = async (item: videoByIdProps) => {
+        setNewVideo(item)
+    }
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className="min-h-screen ">
             <div className="max-w-[1800px] mx-auto p-6">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Main Content */}
-                    <div className="lg:col-span-2 space-y-4">
+                    <div className="lg:col-span-2 space-y-4 bg-white">
                         {/* Video Player */}
                         ${!video ? (
                             <div className="aspect-video rounded-xl overflow-hidden ">
@@ -68,7 +101,7 @@ const YouTubeWatchPage = () => {
                         ) : (
                             <div className="aspect-video rounded-xl overflow-hidden bg-black">
                                 <ReactPlayer
-                                    url={video?.videoFile.url || ""}
+                                    url={ newVideo?.videoFile.url || video?.videoFile.url}
                                     width={"100%"}
                                     height={'100%'}
                                     controls={true}
@@ -78,7 +111,6 @@ const YouTubeWatchPage = () => {
                         {/* Video Info */}
                         <div className="space-y-4">
                             <h1 className="text-xl font-bold">{video?.title}</h1>
-
                             <div className="flex items-center justify-between flex-wrap gap-4">
                                 {/* Channel Info */}
                                 <div className="flex items-center gap-4">
@@ -105,10 +137,6 @@ const YouTubeWatchPage = () => {
                                             <span>250K</span>
                                         </button>
                                     </div>
-                                    <button className="flex items-center gap-2 bg-base-200  hover:bg-base-300  px-4 py-2  rounded-full">
-                                        <Download className="w-5 h-5" />
-                                        <span>Download</span>
-                                    </button>
                                 </div>
                             </div>
 
@@ -117,7 +145,7 @@ const YouTubeWatchPage = () => {
                                 <div className="flex items-center gap-2 text-sm">
                                     <span>{video?.views} views</span>
                                     <span>•</span>
-                                    <span>{relativeTime}</span>
+                                    <span>{moment(video?.createdAt).fromNow()}</span>
                                 </div>
                                 <p className="mt-2 text-sm">
                                     {video?.description}
@@ -127,25 +155,54 @@ const YouTubeWatchPage = () => {
                         </div>
                     </div>
 
-                    {/* Up Next Videos */}
+                    {/* Up Next Videos AND fOR YOU */}
                     <div className="space-y-4">
-                        <h1 className='font-semibold md:text-xl text-lg '>Up Next</h1>
-                        {[1, 2, 3, 4, 5].map((i, index) => (
-                            <div key={index} className="flex gap-2">
+                        <div className='flex justify-between'>
+                            <h1 className='font-semibold md:text-xl text-lg '>Up Next</h1>
+                        </div>
+                        {playlistVideo && (
+                            <>
+                                <h1 className='font-semibold text-sm sm:text-base text-neutral-500'>{playlistVideo.name}-Playlist</h1>
+                                {playlistVideo?.videos?.map((item, index) => (
+                                    <div key={index} className="flex gap-2 hover:scale-[1.1] duration-200 cursor-pointer  "
+                             onClick={() => handleOnClick(item)}>
+                                        <div className="flex-shrink-0 w-40 aspect-video bg-gray-800 rounded-xl overflow-hidden">
+                                            <figure>
+                                                <img
+                                                    src={item.thumbnail.url}
+                                                    alt="Thumbnail"
+                                                    className="w-full h-full object-cover rounded-xl "
+                                                />
+                                            </figure>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-medium line-clamp-2 ">{item.title}</h3>
+                                            <p className="text-sm text-gray-400 mt-1">{video?.ownerDetails.username}</p>
+                                            <p className="text-sm text-gray-400">
+                                                {moment(item.createdAt).fromNow()}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </>
+                        )}
+                        <h1 className='font-semibold text-sm sm:text-base text-neutral-500'>For You</h1>
+                        {NextVideos?.map((item, index) => (
+                            <div key={index} className="flex gap-2 hover:scale-[1.1] duration-200 cursor-pointer hover:bg-base-200" onClick={() => handleOnClick(item)}>
                                 <div className="flex-shrink-0 w-40 aspect-video bg-gray-800 rounded-xl overflow-hidden">
                                     <figure>
                                         <img
-                                            src={`https://images.unsplash.com/photo-${1580000000000 + i}?w=240&h=135&fit=crop`}
+                                            src={item.thumbnail.url}
                                             alt="Thumbnail"
                                             className="w-full h-full object-cover rounded-xl"
                                         />
                                     </figure>
                                 </div>
                                 <div>
-                                    <h3 className="font-medium line-clamp-2">Suggested Video Title {i}</h3>
-                                    <p className="text-sm text-gray-400 mt-1">Channel Name</p>
+                                    <h3 className="font-medium line-clamp-2">{item.title}</h3>
+                                    <p className="text-sm text-gray-400 mt-1">{item.ownerDetails.username}</p>
                                     <p className="text-sm text-gray-400">
-                                        {i} days ago
+                                        {moment(item.createdAt).fromNow()}
                                     </p>
                                 </div>
                             </div>

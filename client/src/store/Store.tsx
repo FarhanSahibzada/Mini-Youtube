@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import UserReducer from './Userslice'
+import playlistSlice from './PlatlistSlice'
 
 const Store =  configureStore({
     reducer : {
-      auth :  UserReducer
+      auth :  UserReducer,
+      playlist : playlistSlice
     }
 })
 

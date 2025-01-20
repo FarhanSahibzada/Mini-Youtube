@@ -21,6 +21,7 @@ function App() {
       if (response && response.data) {
         dispatch(userLogin(response.data?.data));
         navigate("/Home");
+
       }
     } catch (error) {
       console.log("Error fetching current user:", error);
@@ -51,7 +52,7 @@ function App() {
         await fetchUser();
       } catch (error) {
         if (error instanceof AxiosError) {
-          if (error.response?.status === 404) {
+          if (error.response?.status === 404 || error.response?.status === 401) {
             console.log("Access token expired. Attempting to refresh token...");
             try {
               const isRefreshed = await refreshAccessToken();

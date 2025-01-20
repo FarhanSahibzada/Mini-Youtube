@@ -13,7 +13,7 @@ export default function Sidebar() {
         { icon: Home, label: 'Home', page: "Home" },
         { icon: PlaySquare, label: 'Subscriptions', page: "Subcriptions" },
         { icon: Clock, label: 'History', page: 'History' },
-        { icon: User, label: 'You', page: `my-profile/${loginUser?._id}` },
+        { icon: User, label: 'You', page: `my-profile/${loginUser?.username}` },
     ];
     return (
         <div>
