@@ -23,7 +23,7 @@ const route = createBrowserRouter([
     element: <App />,
     children: [
       {
-        index: true, 
+        index: true,
         element: <Home />,
       },
       {
@@ -56,11 +56,7 @@ const route = createBrowserRouter([
       },
       {
         path: 'my-profile/:username',
-        element: (
-          <AuthLayout authentication>
-            <Profile />
-          </AuthLayout>
-        )
+        element: <Profile />
       },
       {
         path: 'setting-page',

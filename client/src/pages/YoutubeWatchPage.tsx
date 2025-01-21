@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import ReactPlayer from 'react-player';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment'
 import { videoType } from './Home';
 import { useSelector } from 'react-redux';
@@ -41,6 +41,7 @@ const YouTubeWatchPage = () => {
     const [NextVideos, setNextVideos] = useState<Array<videoByIdProps>>([])
     const playlistData = useSelector((state: RootState) => state.playlist.currentPlaylist)
     const [newVideo, setNewVideo] = useState<videoByIdProps | null >(null)
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (playlistData) {
@@ -117,10 +118,13 @@ const YouTubeWatchPage = () => {
                                     <img
                                         src={video?.ownerDetails.avatar.url}
                                         alt="Channel Avatar"
-                                        className="w-10 h-10 rounded-full"
+                                        className="w-10 h-10 rounded-full opacity-100 hover:opacity-80 duration-100 cursor-pointer"
+                                        onClick={()=> navigate(`/my-profile/${video?.ownerDetails.username}`)}
                                     />
                                     <div>
-                                        <h3 className="font-bold">{video?.ownerDetails.username}</h3>
+                                        <h3 className="font-bold opacity-100 hover:opacity-80 duration-100 cursor-pointer"
+                                         onClick={()=> navigate(`/my-profile/${video?.ownerDetails.username}`)}
+                                        >{video?.ownerDetails.username} </h3>
                                         <p className="text-sm text-gray-400">2.5M subscribers</p>
                                     </div>
                                     <button className="bg-gray-900 text-white px-4 py-2 rounded-full font-medium hover:bg-gray-700">

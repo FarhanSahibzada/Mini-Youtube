@@ -21,10 +21,11 @@ export function Dropdown() {
 
     const handleLogoutbtn = async () => {
         try {
-            const userLogout = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/users/logout`,
+            const userLogout = await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/users/logout`,
                 {},
                 { withCredentials: true }
             )
+
             if (userLogout.status == 200) {
                 dispatch(logout())
                 navigate('/sign-in')

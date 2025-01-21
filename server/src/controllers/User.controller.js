@@ -150,18 +150,19 @@ const loginUser = Asynchandler(async (req, res) => {
         ))
 })
 
-const logoutUser = Asynchandler(async (req, res) => {
-    User.findByIdAndUpdate(req.user._id,
+const logoutUser = Asynchandler(async (req , res) => {
+    
+   const user = await User.findByIdAndUpdate(req.user._id,
         {
             $set: {
-                refreshToken: undefined
+                refeshToken: null
             }
         },
         {
             new: true
         }
     )
-
+    
     const options = {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production'
