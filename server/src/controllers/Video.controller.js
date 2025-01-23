@@ -137,12 +137,30 @@ const getVideoById = Asynchandler(async (req, res) => {
                 as: "ownerDetails",
                 pipeline: [
                     {
+                        $lookup: {
+                            from: "subcriptions",
+                            localField: "_id",
+                            foreignField: "channel",
+                            as: "Subscribers",
+                        }
+                    },
+                    {
                         $addFields: {
                             watchHistory: {
                                 $concatArrays: [
                                     '$watchHistory',
                                     [{ videoId: '$_id' }]
                                 ]
+                            },
+                            SubcriberCount: {
+                                $size: "$Subscribers"
+                            },
+                            isSubcribed: {
+                                $cond: {
+                                    if: { $in:[req.user?._id  ,"$Subscribers.subscriber"] },
+                                    then: true,
+                                    else: false
+                                }
                             }
                         }
                     },
@@ -150,6 +168,8 @@ const getVideoById = Asynchandler(async (req, res) => {
                         $project: {
                             username: 1,
                             avatar: 1,
+                            SubcriberCount : 1 ,
+                            isSubcribed : 1,
                         }
                     }
                 ]
@@ -161,10 +181,11 @@ const getVideoById = Asynchandler(async (req, res) => {
         }
     ])
 
+ 
 
     return res.
         status(200)
-        .json(new ApiResponse(200, Videos, "Video is completely uploaded!"))
+        .json(new ApiResponse(200, Videos, "Video is completely fetched!"))
 })
 
 const updateVideo = Asynchandler(async (req, res) => {

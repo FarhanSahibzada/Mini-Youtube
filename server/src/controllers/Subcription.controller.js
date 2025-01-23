@@ -40,8 +40,6 @@ const getSubcriberVideos = Asynchandler(async (req, res) => {
     if (!subcriberId) {
         throw new ApiError(500, "can not get the subcriber");
     }
-    console.log(subcriberId)
-
    
     const Data = await Subcription.aggregate([
         {

@@ -1,7 +1,7 @@
 import Home from '@/components/Profile.tabs/Home';
 import Playlist from '@/components/Profile.tabs/Playlist';
 import Videos from '@/components/Profile.tabs/Videos';
-import { UserCheck2 } from 'lucide-react';
+import { Bell, UserCheck2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { videoType } from './Home';
 import axios from 'axios';
@@ -23,14 +23,18 @@ export default function Profile() {
     const tabs = ['Home', 'Videos', 'Playlist'];
     const [userProfile, setUserProfile] = useState<userProfileType>()
     const [videoList, setVideoList] = useState<Array<videoType>>([])
+    const [subcribeBtn, setSubcribeBtn] = useState<boolean>(false)
     const { username } = useParams()
+
 
     useEffect(() => {
         const getuserData = async () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/users/channel/${username}`, { withCredentials: true })
                 if (response && response.data) {
-                    setUserProfile(response.data?.data)
+                    const data = response.data?.data;
+                    setUserProfile(data)
+                    setSubcribeBtn(data?.isSubcribed)
                 }
             } catch (error) {
                 console.log("cannot get the Please try again ", error)
@@ -74,6 +78,20 @@ export default function Profile() {
         }
     }
 
+    const handleSubcribedBtn = async (id: string) => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/subcriber/toggle-subcriber/${id}`, { withCredentials: true })
+            const respnseData = response.data?.data;
+            if (respnseData == "Subscribed successfully") {
+                setSubcribeBtn(true)
+            } else if (respnseData == "Unsubscribed successfully") {
+                setSubcribeBtn(false)
+            }
+        } catch (error) {
+            console.log("subcribed btn error ", error)
+        }
+    }
+
     return (
         <div className="w-full">
             {/* Banner */}
@@ -103,15 +121,28 @@ export default function Profile() {
                             <span>•</span>
                             <span>{userProfile?.subcriberCount} subscribers</span>
                             <span>•</span>
-                            <span>{videoList.length}</span>
+                            <span>{videoList.length} Videos</span>
                         </div>
                     </div>
 
                     {/* Action Buttons */}
                     <div className="flex gap-3 items-center">
-                        <button className={`flex items-center gap-2  px-4 py-2 ${userProfile?.isSubcribed ? "bg-slate-200 text-black" : "bg-black text-white"} rounded-full hover:bg-gray-800`}>
-                            <UserCheck2 size={20} />
-                            {userProfile?.isSubcribed ? (<span>Subscribed</span>) : (<span>Subscribe</span>)}
+                        <button className={`flex items-center gap-2  px-4 py-2 ${subcribeBtn ? "bg-slate-200 text-black" : "bg-black text-white"}
+                         duration-250 rounded-full opacity-100 hover:opacity-80`}
+                            onClick={() => handleSubcribedBtn(userProfile?._id || "")}
+                        >
+                            {subcribeBtn ? (
+                                <>
+                                    <Bell size={20} />
+                                    <span>Subscribed</span>
+
+                                </>
+                            ) : (
+                                <>
+                                    <UserCheck2 size={20} />
+                                    <span>Subscribe</span>
+                                </>
+                            )}
                         </button>
                     </div>
                 </div>

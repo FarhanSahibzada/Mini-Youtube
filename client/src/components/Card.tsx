@@ -1,7 +1,7 @@
 import { useStopPropagationandNavigate } from "@/hooks/StopPagination";
 import { videoType } from "@/pages/Home";
 import moment from "moment";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 interface CardProps {

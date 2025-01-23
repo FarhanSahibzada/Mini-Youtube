@@ -57,6 +57,7 @@ const YouTubeWatchPage = () => {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/videos/watch/${id}`, { withCredentials: true })
                 if (response && response.data) {
                     setVideo(response.data.data[0])
+                    console.log(response.data.data)
                 }
             } catch (error) {
                 console.log("cannot get the please try again", error)
