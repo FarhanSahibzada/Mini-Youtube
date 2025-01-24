@@ -19,6 +19,7 @@ type InitialState = {
 const initialState: InitialState = {
   userLogin: null,
   authStatus: false,
+  searchTerm : ""
 };
 
 const userSlice = createSlice({

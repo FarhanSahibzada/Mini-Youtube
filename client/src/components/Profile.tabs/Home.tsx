@@ -32,9 +32,9 @@ function Home({ data }: Homeprops) {
           />
         </div>
         <div>
-          <h1 className='font-semibold text-base md:text-lg  '>{videoList[0]?.ownerDetails.username} - {videoList[0]?.title}</h1>
+          <h1 className='font-semibold text-base md:text-lg  '>{videoList[0]?.ownerDetails.username} - {videoList[0]?.title.slice(0,23)}</h1>
           <h1 className='font-medium text-gray-500 text-base mt-2 '>{videoList[0]?.views} views - {relatime} </h1>
-          <h1 className='font-semibold  text-base mt-2'>{videoList[0]?.description}</h1>
+          <h1 className='font-semibold  text-base mt-2'>{videoList[0]?.description.slice(0,70)}...</h1>
         </div>
       </div>
       <div className='w-full  my-6 '>

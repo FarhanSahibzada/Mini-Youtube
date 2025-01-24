@@ -19,22 +19,24 @@ const userSchema = new mongoose.Schema({
     },
     avatar: {
         type: {
-            url : String ,
-            public_Id :String
+            url: String,
+            public_Id: String
         },
         required: true
     },
     coverImage: {
-        type : {
-            url : String ,
-            public_Id : String
+        type: {
+            url: String,
+            public_Id: String
         },
-        required : false
+        required: false
     },
-    watchHistory: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Video'
-    }],
+    watchHistory: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Video'
+        }
+    ],
     password: {
         type: String,
         required: [true, "Password is required "]

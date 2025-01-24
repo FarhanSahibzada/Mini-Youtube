@@ -73,7 +73,7 @@ function App() {
   }, [navigate, dispatch, fetchUser, refreshAccessToken]);
 
   return !loading ? (
-    <div className='flex gap-1 flex-col-reverse sm:flex-row  overflow-hidden bg-white'>
+    <div className='flex  gap-1 flex-col-reverse sm:flex-row  overflow-hidden bg-white'>
       <div>
         <Sidebar />
       </div>
@@ -83,7 +83,8 @@ function App() {
       </div>
     </div>
   ) : (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-slate-200 to-base-300 backdrop-blur-lg bg-white/30">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-slate-200 
+    to-base-300 backdrop-blur-lg bg-white/30">
       <div className="flex space-x-3 mb-6">
         <div className="w-4 h-4 bg-red-500 rounded-full animate-bounce"></div>
         <div className="w-4 h-4 bg-red-500 rounded-full animate-bounce delay-100"></div>

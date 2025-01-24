@@ -40,7 +40,7 @@ const getSubcriberVideos = Asynchandler(async (req, res) => {
     if (!subcriberId) {
         throw new ApiError(500, "can not get the subcriber");
     }
-   
+
     const Data = await Subcription.aggregate([
         {
             $match: {
@@ -52,35 +52,42 @@ const getSubcriberVideos = Asynchandler(async (req, res) => {
                 from: "videos",
                 localField: "channel",
                 foreignField: "owner",
-                as: "video",
+                as: "videos",
                 pipeline: [
                     {
                         $lookup: {
                             from: "users",
                             localField: "owner",
                             foreignField: "_id",
-                            as: "owner",
+                            as: "ownerDetails",
                             pipeline: [
                                 {
                                     $project: {
+                                        _id: 1,
                                         username: 1,
                                         avatar: 1,
-
                                     }
                                 }
                             ]
                         }
+                    },
+                    {
+                        $unwind: "$ownerDetails"
                     }
                 ]
             }
+        }, {
+            $unwind: "$videos"
+        },
+        {
+            $replaceRoot: { newRoot: "$videos" }
         }
-   ])
+    ])
 
-    console.log(Data)
 
     return res
-    .status(200)
-    .json(new ApiResponse(200 , Data , "successfully get the data"))
+        .status(200)
+        .json(new ApiResponse(200, Data, "successfully get the data"))
 
 })
 

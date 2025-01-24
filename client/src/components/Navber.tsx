@@ -8,10 +8,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuItem
 } from './ui/dropdown-menu';
+import { useDispatch } from 'react-redux';
+import { useState } from 'react';
+import { setSearchTerm } from '@/store/Userslice';
 
 
 export default function Navbar() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const [search, Setsearch] = useState<string>('')
+
+  const handleSearch = () => {
+    if (search.length > 0) {
+      dispatch(setSearchTerm(search))
+      navigate(`search_query/${search.trim()}`)
+    }
+  }
+
   return (
     <nav className="bg-white z-50  relative">
       <div className="flex items-center justify-between w-[100%] h-14 px-4">
@@ -26,10 +39,13 @@ export default function Navbar() {
             <input
               type="text"
               placeholder="Search"
-              className="w-full px-4 py-2 border border-gray-300 rounded-l-full focus:border-blue-500 focus:outline-none"
+              className="min-w-[70%] px-4 py-2 border border-gray-300 rounded-l-full focus:border-blue-500 focus:outline-none"
+              value={search}
+              onChange={(e) => Setsearch(e.target.value)}
             />
-            <button className="px-6 py-2 bg-gray-100 border border-l-0 border-gray-300 rounded-r-full hover:bg-gray-200">
-              <Search size={20} />
+            <button onClick={handleSearch}
+              className="px-4 py-2 bg-gray-100 border border-l-0 border-gray-300 rounded-r-full hover:bg-gray-200">
+              <Search size={16} />
             </button>
           </div>
         </div>
@@ -43,7 +59,7 @@ export default function Navbar() {
             </DropdownMenuTrigger>
             <DropdownMenuSeparator />
             <DropdownMenuContent className='w-40 rounded-xl'>
-               <DropdownMenuItem className='rounded-xl' onClick={()=> navigate('/upload-video')}>Upload Video</DropdownMenuItem>
+              <DropdownMenuItem className='rounded-xl' onClick={() => navigate('/upload-video')}>Upload Video</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <button className="p-2 hover:bg-gray-100 rounded-full ">

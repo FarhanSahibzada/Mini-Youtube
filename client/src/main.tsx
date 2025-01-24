@@ -13,6 +13,9 @@ import Profile from './pages/Profile.tsx'
 import YouTubeWatchPage from './pages/YoutubeWatchPage.tsx'
 import UploadVideo from './pages/UploadVideo.tsx'
 import Settings from './pages/Settings.tsx'
+import Subcriptions from './pages/Subcriptions.tsx'
+import HistoryPage from './pages/HistoryPage.tsx'
+import SearchPage from './pages/SearchPage.tsx'
 
 
 
@@ -72,6 +75,25 @@ const route = createBrowserRouter([
           <AuthLayout authentication>
             <YouTubeWatchPage />
           </AuthLayout>
+        ),
+        
+      } ,{
+        path:"subcription-videos",
+        element : (
+         <AuthLayout authentication>
+          <Subcriptions/>
+         </AuthLayout>
+        )
+      },
+      {
+        path:"search_query/:name",
+        element :<SearchPage/>  
+      },{
+        path:"watch-history",
+        element : (
+         <AuthLayout authentication>
+          <HistoryPage />
+         </AuthLayout>
         )
       }
     ]

@@ -150,9 +150,9 @@ const loginUser = Asynchandler(async (req, res) => {
         ))
 })
 
-const logoutUser = Asynchandler(async (req , res) => {
-    
-   const user = await User.findByIdAndUpdate(req.user._id,
+const logoutUser = Asynchandler(async (req, res) => {
+
+    const user = await User.findByIdAndUpdate(req.user._id,
         {
             $set: {
                 refeshToken: null
@@ -162,7 +162,7 @@ const logoutUser = Asynchandler(async (req , res) => {
             new: true
         }
     )
-    
+
     const options = {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production'
@@ -222,9 +222,9 @@ const changeCurrentPassword = Asynchandler(async (req, res) => {
 
     const { oldPassword, newPassword } = req.body;
 
-    
+
     if (!oldPassword || !newPassword) {
-        throw new ApiError(401 , "can not getting the data")
+        throw new ApiError(401, "can not getting the data")
     }
 
     const user = await User.findOne(req.user?._id)
@@ -241,7 +241,7 @@ const changeCurrentPassword = Asynchandler(async (req, res) => {
 })
 
 const getCurrentUser = Asynchandler(async (req, res) => {
-    
+
     return res
         .status(200)
         .json(new ApiResponse(
@@ -335,7 +335,7 @@ const updateCoverImage = Asynchandler(async (req, res) => {
 });
 
 const getChannelProfile = Asynchandler(async (req, res) => {
-    const { username} = req.params;
+    const { username } = req.params;
 
     if (!username) {
         throw new ApiError(401, "User is not found ");
@@ -362,7 +362,7 @@ const getChannelProfile = Asynchandler(async (req, res) => {
                 },
                 isSubcribed: {
                     $cond: {
-                        if: { $in:[req.user?._id  ,"$Subcribers.subscriber"] },
+                        if: { $in: [req.user?._id, "$Subcribers.subscriber"] },
                         then: true,
                         else: false
                     }
@@ -392,10 +392,12 @@ const getChannelProfile = Asynchandler(async (req, res) => {
 })
 
 const getWatchHistory = Asynchandler(async (req, res) => {
+
+
     const user = await User.aggregate([
         {
             $match: {
-                _id: new mongoose.Types.ObjectId(req.user_.id)
+                _id: new mongoose.Types.ObjectId(req.user?._id)
             }
         },
         {
@@ -409,9 +411,9 @@ const getWatchHistory = Asynchandler(async (req, res) => {
                     {
                         $lookup: {
                             from: "users",
-                            localField: "owners",
+                            localField: "owner",
                             foreignField: "_id",
-                            as: "owner",
+                            as: "ownerDetails",
                             pipeline: [
                                 {
                                     $project: {
@@ -426,20 +428,37 @@ const getWatchHistory = Asynchandler(async (req, res) => {
                     },
                     {
                         $addFields: {
-                            owner: {
-                                $first: "$owner"
+                            ownerDetails: {
+                                $first: "$ownerDetails"
                             }
                         }
                     }
                 ]
             }
         }
-
     ])
 
     return res
         .status(200)
         .json(new ApiResponse(200, user[0].watchHistory, "watchHistory and owner fetch"))
+
+})
+
+const deletWatchHistory = Asynchandler(async (req, res) => {
+    const {videoId} = req.params;
+
+    if (!videoId) {
+        throw new ApiError(401, "videoId is undefined")
+    }
+
+    await User.updateOne(
+        { _id: req.user?._id },
+        { $pull: { watchHistory: videoId } }
+    )
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, [], "History delet successfully"))
 
 })
 
@@ -454,5 +473,6 @@ export {
     updateAvatar,
     updateCoverImage,
     getChannelProfile,
-    getWatchHistory
+    getWatchHistory,
+    deletWatchHistory
 }

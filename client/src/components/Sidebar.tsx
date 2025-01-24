@@ -11,8 +11,8 @@ export default function Sidebar() {
     const loginUser = useSelector((state : RootState)=> state.auth.userLogin)
     const menuItems = [
         { icon: Home, label: 'Home', page: "Home" },
-        { icon: PlaySquare, label: 'Subscriptions', page: "Subcriptions" },
-        { icon: Clock, label: 'History', page: 'History' },
+        { icon: PlaySquare, label: 'Subscriptions', page: "Subcription-videos" },
+        { icon: Clock, label: 'History', page: 'watch-history' },
         { icon: User, label: 'You', page: `my-profile/${loginUser?.username}` },
     ];
     return (

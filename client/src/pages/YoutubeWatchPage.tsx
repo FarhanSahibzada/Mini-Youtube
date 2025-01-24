@@ -1,6 +1,5 @@
 import axios from 'axios';
 import {
-    ThumbsUp,
     Bell,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -24,7 +23,9 @@ export interface videoByIdProps {
     ownerDetails: {
         id: string,
         avatar: { url: string },
-        username: string
+        username: string,
+        isSubcribed: boolean,
+        subcriberCount: number
     },
 }
 export interface playlistType {
@@ -40,7 +41,8 @@ const YouTubeWatchPage = () => {
     const [playlistVideo, setPlaylistVideo] = useState<playlistType | null>(null)
     const [NextVideos, setNextVideos] = useState<Array<videoByIdProps>>([])
     const playlistData = useSelector((state: RootState) => state.playlist.currentPlaylist)
-    const [newVideo, setNewVideo] = useState<videoByIdProps | null >(null)
+    const [newVideo, setNewVideo] = useState<videoByIdProps | null>(null)
+    const [subcribeBtn, setSubcribeBtn] = useState<boolean>(false)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -56,8 +58,9 @@ const YouTubeWatchPage = () => {
             try {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/videos/watch/${id}`, { withCredentials: true })
                 if (response && response.data) {
+                    const data = response.data?.data[0]
                     setVideo(response.data.data[0])
-                    console.log(response.data.data)
+                    setSubcribeBtn(data?.ownerDetails?.isSubcribed)
                 }
             } catch (error) {
                 console.log("cannot get the please try again", error)
@@ -72,6 +75,7 @@ const YouTubeWatchPage = () => {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/videos/`, { withCredentials: true })
                 if (response && response.data) {
                     setNextVideos(response.data.data.docs)
+
                 }
             } catch (error) {
                 console.log("can't fetch the next videos", error)
@@ -82,7 +86,26 @@ const YouTubeWatchPage = () => {
     }, [])
 
     const handleOnClick = async (item: videoByIdProps) => {
-        setNewVideo(item)
+        if(item.ownerDetails.username == video?.ownerDetails.username || item.ownerDetails.username  ==  newVideo?.ownerDetails.username){
+            setNewVideo(item)
+        }else{
+            setNewVideo(item)
+            setSubcribeBtn(item.ownerDetails.isSubcribed)
+        }
+    }
+
+    const handleSubcribeBtn = async (id: string) => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/subcriber/toggle-subcriber/${id}`, { withCredentials: true })
+            const respnseData = response.data?.data;
+            if (respnseData == "Subscribed successfully") {
+                setSubcribeBtn(true)
+            } else if (respnseData == "Unsubscribed successfully") {
+                setSubcribeBtn(false)
+            }
+        } catch (error) {
+            console.log("error on subcribe button", error)
+        }
     }
 
     return (
@@ -103,7 +126,7 @@ const YouTubeWatchPage = () => {
                         ) : (
                             <div className="aspect-video rounded-xl overflow-hidden bg-black">
                                 <ReactPlayer
-                                    url={ newVideo?.videoFile.url || video?.videoFile.url}
+                                    url={newVideo?.videoFile.url || video?.videoFile.url}
                                     width={"100%"}
                                     height={'100%'}
                                     controls={true}
@@ -112,37 +135,39 @@ const YouTubeWatchPage = () => {
                         )}
                         {/* Video Info */}
                         <div className="space-y-4">
-                            <h1 className="text-xl font-bold">{video?.title}</h1>
+                            <h1 className="text-xl font-bold">{newVideo?.title || video?.title}</h1>
                             <div className="flex items-center justify-between flex-wrap gap-4">
                                 {/* Channel Info */}
                                 <div className="flex items-center gap-4">
                                     <img
-                                        src={video?.ownerDetails.avatar.url}
+                                        src={newVideo?.ownerDetails.avatar.url || video?.ownerDetails.avatar.url}
                                         alt="Channel Avatar"
                                         className="w-10 h-10 rounded-full opacity-100 hover:opacity-80 duration-100 cursor-pointer"
-                                        onClick={()=> navigate(`/my-profile/${video?.ownerDetails.username}`)}
+                                        onClick={() => navigate(`/my-profile/${newVideo?.ownerDetails.username || video?.ownerDetails.username}`)}
                                     />
                                     <div>
                                         <h3 className="font-bold opacity-100 hover:opacity-80 duration-100 cursor-pointer"
-                                         onClick={()=> navigate(`/my-profile/${video?.ownerDetails.username}`)}
-                                        >{video?.ownerDetails.username} </h3>
-                                        <p className="text-sm text-gray-400">2.5M subscribers</p>
+                                            onClick={() => navigate(`/my-profile/${newVideo?.ownerDetails.username || video?.ownerDetails.username}`)}
+                                        >{newVideo?.ownerDetails.username || video?.ownerDetails.username} </h3>
+                                        <p className="text-sm text-gray-400">{ }</p>
                                     </div>
-                                    <button className="bg-gray-900 text-white px-4 py-2 rounded-full font-medium hover:bg-gray-700">
-                                        Subscribe
+                                    <button className={`${subcribeBtn ? "bg-base-200 text-gray-900" : "bg-gray-900 text-white"} px-4 py-2 duration-200 rounded-full font-medium opacity-100 hover:opacity-80`}
+                                        onClick={() => handleSubcribeBtn(newVideo?.owner || video?.owner || "")}
+                                    >
+                                        {subcribeBtn ? "Subcribed" : "Subcribe"}
                                     </button>
                                     <Bell className="w-6 h-6 text-gray-400 cursor-pointer" />
                                 </div>
 
                                 {/* Video Actions */}
-                                <div className="flex items-center gap-2">
+                                {/* <div className="flex items-center gap-2">
                                     <div className="flex items-center bg-base-200 hover:bg-base-300 rounded-full">
                                         <button className="flex items-center gap-2 px-4 py-2  ">
                                             <ThumbsUp className="w-5 h-5" />
                                             <span>250K</span>
                                         </button>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
 
                             {/* Description */}
@@ -170,7 +195,7 @@ const YouTubeWatchPage = () => {
                                 <h1 className='font-semibold text-sm sm:text-base text-neutral-500'>{playlistVideo.name}-Playlist</h1>
                                 {playlistVideo?.videos?.map((item, index) => (
                                     <div key={index} className="flex gap-2 hover:scale-[1.1] duration-200 cursor-pointer  "
-                             onClick={() => handleOnClick(item)}>
+                                        onClick={() => handleOnClick(item)}>
                                         <div className="flex-shrink-0 w-40 aspect-video bg-gray-800 rounded-xl overflow-hidden">
                                             <figure>
                                                 <img

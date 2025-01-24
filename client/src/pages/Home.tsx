@@ -16,6 +16,8 @@ export interface videoType {
     id: string  ,
     avatar : {url : string} ,
     username : string 
+    isSubcribed : boolean,
+    subcriberCount : number
   },
 }
 

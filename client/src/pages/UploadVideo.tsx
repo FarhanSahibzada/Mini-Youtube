@@ -23,7 +23,7 @@ interface temperoryVideo {
 
 function UploadVideo() {
 
-    const [firstUpload, setFirstUpload] = useState(false);
+    const [firstUpload, setFirstUpload] = useState<boolean>(true);
     const [displayNum, setDisplayNum] = useState<number>(1)
     const UserData = useSelector((state: RootState) => state.auth.userLogin)
     const [playlists, setPlaylists] = useState<Array<playlistProps>>([])
@@ -35,8 +35,10 @@ function UploadVideo() {
     const { register, handleSubmit } = useForm()
 
     useEffect(() => {
-        setFirstUpload(true);
-    }, []);
+        if (firstUpload == false) {
+            navigate('/Home')
+        }
+    }, [firstUpload, navigate]);
 
     function handleUi() {
         if (displayNum > 2) {
@@ -113,6 +115,7 @@ function UploadVideo() {
         }
     }
 
+    
     if (!loading) {
         return (
             <>
@@ -205,7 +208,7 @@ function UploadVideo() {
                                                             >Create New Playlist</h1>
                                                             <PlaylistDialogBox title="Create a new Playlist" isDialogOpen={playlistDialog}
                                                                 setIsDialogOpen={setPlaylistDialog} children={
-                                                                    <PlaylistUi  onPlaylistCreated={(id: string) => {
+                                                                    <PlaylistUi onPlaylistCreated={(id: string) => {
                                                                         handlePlaylistClick(id);
                                                                     }} />
                                                                 }

@@ -4,10 +4,11 @@ import { ApiResponse } from '../utils/APIResponse.js';
 import { RemoveOldImageFromCloudinary, UploadOnCloudinary, } from '../Service/Cloudinary.js';
 import { Asynchandler } from "../utils/Asynchandler.js";
 import mongoose from "mongoose";
+import { User } from "../modal/User.modal.js";
 
 
 const getAllVideos = Asynchandler(async (req, res) => {
-    const { page = 1, limit = 10, query = "", sortBy = "createdAt", sortType = "desc", userId } = req.query;
+    const { page = 1, limit = 10, query ="", sortBy = "createdAt", sortType = "desc", userId } = req.query;
 
     const pipeline = [];
 
@@ -118,10 +119,15 @@ const publishVideo = Asynchandler(async (req, res) => {
 const getVideoById = Asynchandler(async (req, res) => {
     const { videoId } = req.params;
 
-    const video = await Video.updateOne(
+    await Video.updateOne(
         { _id: videoId },
-        { $inc: { views: 0.5 } }
+        { $inc: { views: 0.5 }, }
     )
+
+    await User.updateOne(
+        { _id: req.user?._id },
+        { $addToSet: { watchHistory:  videoId } }
+    );
 
     const Videos = await Video.aggregate([
         {
@@ -146,18 +152,12 @@ const getVideoById = Asynchandler(async (req, res) => {
                     },
                     {
                         $addFields: {
-                            watchHistory: {
-                                $concatArrays: [
-                                    '$watchHistory',
-                                    [{ videoId: '$_id' }]
-                                ]
-                            },
                             SubcriberCount: {
                                 $size: "$Subscribers"
                             },
                             isSubcribed: {
                                 $cond: {
-                                    if: { $in:[req.user?._id  ,"$Subscribers.subscriber"] },
+                                    if: { $in: [req.user?._id, "$Subscribers.subscriber"] },
                                     then: true,
                                     else: false
                                 }
@@ -168,8 +168,8 @@ const getVideoById = Asynchandler(async (req, res) => {
                         $project: {
                             username: 1,
                             avatar: 1,
-                            SubcriberCount : 1 ,
-                            isSubcribed : 1,
+                            SubcriberCount: 1,
+                            isSubcribed: 1,
                         }
                     }
                 ]
@@ -181,7 +181,7 @@ const getVideoById = Asynchandler(async (req, res) => {
         }
     ])
 
- 
+
 
     return res.
         status(200)

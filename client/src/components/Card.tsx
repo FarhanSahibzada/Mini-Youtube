@@ -11,13 +11,13 @@ interface CardProps {
 
 function Card({ items, profileshow = true }: CardProps) {
 
-    const createdAt  = items?.createdAt;
+    const createdAt = items?.createdAt;
     const relatime = moment(createdAt).fromNow()
- const {onStartShouldSetResponder , onTouchEnd} = useStopPropagationandNavigate()
- const navigate = useNavigate();
+    const { onStartShouldSetResponder, onTouchEnd } = useStopPropagationandNavigate()
+    const navigate = useNavigate();
     return (
         <div className="card card-compact  bg-base-100  min-h-60   overflow-hidden cursor-pointer">
-            <div onClick={()=> navigate(`/watch/${items._id}`)}>
+            <div onClick={() => navigate(`/watch/${items._id}`)}>
                 <figure>
                     <img
                         src={items.thumbnail.url}
@@ -26,11 +26,16 @@ function Card({ items, profileshow = true }: CardProps) {
                     />
                 </figure>
                 <div className="card-body">
-                    <div className="flex gap-2" onMouseDown={onStartShouldSetResponder}  onClick={(e)=> onTouchEnd(e,`/my-profile/${items.ownerDetails.username}` )}>
+                    <div className="flex gap-2" onMouseDown={onStartShouldSetResponder} onClick={(e) => onTouchEnd(e, `/my-profile/${items.ownerDetails.username}`)}>
                         {profileshow && (
                             <img src={items.ownerDetails.avatar.url} alt="" className='w-12 h-12 object-cover rounded-full' />
                         )}
-                        <h1 className="card-title text-lg">{items.title}</h1>
+                        <h1 className="card-title text-lg">
+                            {
+                                items.title.length <= 25 ? items.title : 
+                                ( <span>{ items.title.slice(0,25)}...</span> ) 
+                            }
+                        </h1>
                     </div>
                     <p>{items.ownerDetails.username}</p>
                     <p>{items.views} views - {relatime}</p>

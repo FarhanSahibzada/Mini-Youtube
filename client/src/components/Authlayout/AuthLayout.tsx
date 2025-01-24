@@ -12,7 +12,7 @@ export default function AuthLayout({ children, authentication = true }: authlayo
     const navigate = useNavigate()
     const userstatus = useSelector((state: RootState) => state.auth.authStatus)
     const [loader, setLoader] = useState(true)
-   
+
     useEffect(() => {
         if (authentication && userstatus !== authentication) {
             navigate('/sign-in')
@@ -24,7 +24,7 @@ export default function AuthLayout({ children, authentication = true }: authlayo
 
 
     return loader ? <div className="min-h-screen font-bold text-blue-600 flex justify-center items-center">...Loading</div> :
-        <div className="flex flex-col min-h-screen items-center justify-center">
+        <div className="flex flex-col  items-center ">
             {children}
         </div>
 }
