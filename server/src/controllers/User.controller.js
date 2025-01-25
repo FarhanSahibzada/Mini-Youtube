@@ -137,6 +137,7 @@ const loginUser = Asynchandler(async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: 'None'
     }
 
     return res
@@ -195,6 +196,7 @@ const refreshAccessToken = Asynchandler(async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             maxAge: 7 * 24 * 60 * 60 * 1000,
+            sameSite: 'None'
         }
 
         return res
@@ -445,7 +447,7 @@ const getWatchHistory = Asynchandler(async (req, res) => {
 })
 
 const deletWatchHistory = Asynchandler(async (req, res) => {
-    const {videoId} = req.params;
+    const { videoId } = req.params;
 
     if (!videoId) {
         throw new ApiError(401, "videoId is undefined")
