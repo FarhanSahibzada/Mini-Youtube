@@ -21,7 +21,6 @@ function App() {
       if (response && response.data) {
         dispatch(userLogin(response.data?.data));
         navigate("/Home");
-
       }
     } catch (error) {
       console.log("Error fetching current user:", error);

@@ -136,8 +136,8 @@ const loginUser = Asynchandler(async (req, res) => {
     const options = {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        sameSite: 'None'
+        maxAge: 10 * 24 * 60 * 60 * 1000,
+       sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
     }
 
     return res
@@ -184,8 +184,7 @@ const refreshAccessToken = Asynchandler(async (req, res) => {
     }
     try {
         const verifyToken = jwt.verify(Token, process.env.REFRESH_TOKEN_SECRET)
-        const user = await User.findOne(verifyToken?._id)
-
+        const user = await User.findOne({ _id : verifyToken.id})
         if (!user) {
             throw new ApiError("401", "Invalid Refresh token");
         }
@@ -195,8 +194,8 @@ const refreshAccessToken = Asynchandler(async (req, res) => {
         const options = {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-            sameSite: 'None'
+            maxAge: 10 * 24 * 60 * 60 * 1000,
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax'
         }
 
         return res
