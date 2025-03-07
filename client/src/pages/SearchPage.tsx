@@ -20,7 +20,6 @@ export default function SearchPage() {
                 if (response && response.data) {
                     const data = response.data?.data?.docs;
                     setVideoData(data)
-                    console.log(data)
                 }
             } catch (error) {
                 console.log("error when fetching the search videos", error)

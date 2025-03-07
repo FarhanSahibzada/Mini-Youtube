@@ -24,6 +24,13 @@ export default function Navbar() {
       navigate(`search_query/${search.trim()}`)
     }
   }
+  function handleSearchh (e : React.KeyboardEvent<HTMLInputElement>){
+    
+    if(e.key == 'Enter'){
+      dispatch(setSearchTerm(search))
+      navigate(`search_query/${search.trim()}`)
+    }
+  }
 
   return (
     <nav className="bg-white z-50  relative">
@@ -41,6 +48,7 @@ export default function Navbar() {
               placeholder="Search"
               className="min-w-[70%] px-4 py-2 border border-gray-300 rounded-l-full focus:border-blue-500 focus:outline-none"
               value={search}
+              onKeyDown={handleSearchh}
               onChange={(e) => Setsearch(e.target.value)}
             />
             <button onClick={handleSearch}
