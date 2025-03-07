@@ -34,10 +34,10 @@ export default function SignInForm() {
     };
 
     return (
-        <div className="flex w-full h-full justify-center items-center min-h-screen p-2 sm:p-0">
+        <div className="flex w-full h-full justify-center items-center min-h-screen p-6 md:p-0">
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="w-full sm:w-[35%] h-auto bg-white border-4 border-red-400 px-4 py-2 rounded-2xl shadow-xl"
+                className="w-full md:w-[35%] h-auto bg-white border-4 border-red-400 px-4 py-2 rounded-2xl shadow-xl"
             >
                 <h1 className="text-center mt-2 font-semibold text-xl">
                     Sign In to Your <span className="text-red-500 font-bold">Account</span>

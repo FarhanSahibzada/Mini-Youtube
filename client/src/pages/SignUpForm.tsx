@@ -68,8 +68,8 @@ export default function SignUpForm() {
 
 
     return (
-        <div className='flex w-full h-full justify-center items-center min-h-screen  p-2 sm:p-0'>
-            <form onSubmit={handleSubmit(onSubmit)} className=' w-full sm:w-[40%] h-auto  bg-white border-4 border-red-400 px-4 py-2  rounded-2xl  shadow-xl'>
+        <div className='flex w-full h-full justify-center items-center min-h-screen  p-6 md:p-0'>
+            <form onSubmit={handleSubmit(onSubmit)} className=' w-full md:w-[48%] lg:w-[35%] h-auto  bg-white border-4 border-red-400 px-4 py-2  rounded-2xl  shadow-xl'>
                 <div className='profilepic flex justify-center items-center flex-col'>
                     <label htmlFor="image" className='cursor-pointer hover:opacity-35 '>
                         <img src={image || dpimage} alt="" className='w-[120px] rounded-full h-[120px] border-2 border-red-500 ' />

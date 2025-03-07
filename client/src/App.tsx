@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
-import { Outlet, useNavigate } from "react-router-dom"
+import { Outlet, useLocation, useNavigate } from "react-router-dom"
 import Navbar from "./components/Navber"
 import Sidebar from "./components/Sidebar"
 import { useDispatch, } from "react-redux"
@@ -10,6 +10,9 @@ function App() {
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const location = useLocation()
+  const hideLocations = ['/sign-in', '/sign-up']
+  const showSlideBar = !hideLocations.includes(location.pathname)
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -73,9 +76,11 @@ function App() {
 
   return !loading ? (
     <div className='flex  gap-1 flex-col-reverse sm:flex-row  overflow-hidden bg-white'>
-      <div>
-        <Sidebar />
-      </div>
+      {showSlideBar && (
+        <div>
+          <Sidebar />
+        </div>
+      )}
       <div className='w-full'>
         <Navbar />
         <Outlet />
